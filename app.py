@@ -65,17 +65,54 @@ with st.form("dados_pesquisa"):
     submitted = st.form_submit_button("🔍 Buscar Revistas e Gerar Relatório Estratégico", type="primary")
 
 # ==============================================================================
-# 2. MOTORES DE BUSCA (APIs Gratuitas e Robustas)
+# 2. MOTORES DE BUSCA (APIs Gratuitas e Robustas) - CÓDIGO CORRIGIDO
 # ==============================================================================
-def buscar_revistas_openalex(query, max_results=3):
-    """Busca revistas na OpenAlex (base oficial alternativa da CAPES ao Scopus/WoS)"""
+def buscar_revistas_openalex(query, max_results=5):
+    """Busca revistas na OpenAlex por assunto/tema (não por nome)"""
     safe_query = urllib.parse.quote(query)
-    url = f"https://api.openalex.org/sources?filter=display_name.search:{safe_query}&per-page={max_results}"
+    
+    # Estratégia: Buscar por works (artigos) relacionados e pegar as revistas
+    url_works = f"https://api.openalex.org/works?search={safe_query}&per-page=20"
+    
     try:
-        response = requests.get(url, timeout=15)
+        # Busca artigos relacionados ao tema
+        response = requests.get(url_works, timeout=15)
         response.raise_for_status()
+        works_data = response.json().get("results", [])
+        
+        # Extrai as revistas desses artigos
+        revistas_encontradas = []
+        ids_vistos = set()
+        
+        for work in works_data:
+            source = work.get("primary_location", {}).get("source")
+            if source and source.get("id") not in ids_vistos:
+                ids_vistos.add(source.get("id"))
+                # Busca detalhes completos da revista
+                source_id = source.get("id").replace("https://openalex.org/", "")
+                url_source = f"https://api.openalex.org/sources/{source_id}"
+                try:
+                    resp = requests.get(url_source, timeout=10)
+                    if resp.status_code == 200:
+                        revista_detalhes = resp.json()
+                        revistas_encontradas.append(revista_detalhes)
+                        if len(revistas_encontradas) >= max_results:
+                            break
+                except:
+                    continue
+        
+        if revistas_encontradas:
+            return revistas_encontradas
+            
+    except Exception as e:
+        print(f"Erro na busca: {e}")
+    
+    # Fallback: busca direta por fontes populares se não encontrar nada
+    fallback_url = f"https://api.openalex.org/sources?per-page={max_results}"
+    try:
+        response = requests.get(fallback_url, timeout=15)
         return response.json().get("results", [])
-    except Exception:
+    except:
         return []
 
 def buscar_altimetria_crossref(issn_list):
@@ -169,7 +206,7 @@ if submitted:
             # Pega as primeiras 15 palavras para otimizar a busca na API
             query_busca = " ".join(resumo.split()[:15]) 
             
-            revistas_encontradas = buscar_revistas_openalex(query_busca, max_results=3)
+            revistas_encontradas = buscar_revistas_openalex(query_busca, max_results=5)
             
             if revistas_encontradas:
                 relatorio_final = gerar_relatorio_capes(titulo, area_capes, foco, revistas_encontradas)
