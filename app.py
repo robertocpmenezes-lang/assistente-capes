@@ -13,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS
+# CSS Premium
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -86,6 +86,29 @@ st.markdown("""
         font-weight: 600;
         width: 100%;
     }
+    
+    /* Destaque dos campos de input */
+    div[data-testid="stTextInput"] > div > input,
+    div[data-testid="stTextArea"] > div > textarea,
+    div[data-testid="stSelectbox"] > div > div {
+        border: 2px solid #667eea !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15) !important;
+        border-radius: 8px !important;
+    }
+    
+    div[data-testid="stTextInput"] > div > input:focus,
+    div[data-testid="stTextArea"] > div > textarea:focus,
+    div[data-testid="stSelectbox"] > div > div:focus-within {
+        border: 2px solid #764ba2 !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
+        background-color: #f7fafc !important;
+    }
+    
+    /* Tooltip melhorado */
+    .stTooltipHoverTarget {
+        cursor: help;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -134,13 +157,13 @@ with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", 
     """)
 
 # ==============================================================================
-# FORMULÁRIO
+# FORMULÁRIO COM EXPLICAÇÕES DETALHADAS
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Dados da Produção Intelectual</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="alert-box alert-info">
-<strong>💡 Dica geral:</strong> Preencha os campos abaixo com informações da sua pesquisa. 
+<strong>💡 Dica geral:</strong> Preencha os campos destacados abaixo com informações da sua pesquisa. 
 Quanto mais detalhado, mais precisas serão as recomendações de revistas!
 </div>
 """, unsafe_allow_html=True)
@@ -151,12 +174,27 @@ with st.form("dados_pesquisa", clear_on_submit=False):
     with col1:
         titulo = st.text_input(
             "📝 Título do Artigo ou Tema da Pesquisa",
-            help="💡 O título ajuda a ferramenta a contextualizar a relevância temática da sua pesquisa."
+            help="""
+            💡 **Por que isso importa para a CAPES?**
+            
+            O título ajuda a ferramenta a contextualizar a relevância temática da sua pesquisa. 
+            Isso é fundamental para o **Procedimento 3 (Avaliação Qualitativa)**, onde os consultores 
+            da CAPES analisam a coerência e o avanço do conhecimento na área.
+            
+            **Como preencher:**
+            • Seja específico e descritivo
+            • Inclua método, aplicação e área
+            • Evite títulos genéricos
+            
+            **Exemplo bom:** "Machine Learning para Diagnóstico Precoce de Diabetes Tipo 2 em Populações Vulneráveis"
+            
+            **Exemplo ruim:** "Machine Learning"
+            """
         )
         st.markdown("""
         <div class="input-note">
         <strong>📌 Por que isso importa?</strong> O título define o contexto temático. 
-        Seja específico! Exemplo: "Machine Learning para Diagnóstico Precoce de Diabetes Tipo 2".
+        Seja específico! Exemplo: "Machine Learning para Diagnóstico Precoce de Diabetes Tipo 2" é melhor que apenas "Machine Learning".
         </div>
         """, unsafe_allow_html=True)
         
@@ -164,27 +202,71 @@ with st.form("dados_pesquisa", clear_on_submit=False):
             "📚 Grande Área de Avaliação CAPES",
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
              "Engenharias", "Ciências Sociais Aplicadas", "Ciências Biológicas", 
-             "Linguística, Letras e Artes", "Ciências Agrárias"]
+             "Linguística, Letras e Artes", "Ciências Agrárias"],
+            help="""
+            💡 **Como cada área avalia?**
+            
+            Cada área possui um **Documento de Área** específico que pondera de forma diferente 
+            os Procedimentos 1, 2 e 3.
+            
+            **Exatas/Saúde:**
+            • Valorizam mais o Fator de Impacto (Proc. 1)
+            • FI > 3.0 é considerado excelente
+            • Quartil Q1 e Q2 têm maior peso
+            
+            **Humanas/Sociais:**
+            • Valorizam mais o Proc. 3 (Qualitativo)
+            • FI > 1.5 já é considerado excelente
+            • Impacto social e cultural têm peso maior
+            
+            **A ferramenta adaptará as recomendações conforme sua área.**
+            """
         )
         st.markdown("""
         <div class="input-note">
-        <strong>📌 Como isso afeta?</strong> 
+        <strong>📌 Como isso afeta a avaliação?</strong> 
         • <strong>Exatas/Saúde:</strong> FI > 3.0 é excelente<br>
-        • <strong>Humanas:</strong> FI > 1.5 já é excelente
+        • <strong>Humanas:</strong> FI > 1.5 já é excelente<br>
+        A ferramenta adaptará as recomendações conforme sua área.
         </div>
         """, unsafe_allow_html=True)
 
     with col2:
         resumo = st.text_area(
-            "🔑 Palavras-chave (EM INGLÊS)",
-            height=120,
-            placeholder="Ex: machine learning diabetes prediction healthcare",
-            help="💡 Use 3-8 palavras-chave em INGLÊS para buscar na base global OpenAlex."
+            "🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
+            height=140,
+            placeholder="Ex: machine learning diabetes prediction healthcare genomics",
+            help="""
+            💡 **CRUCIAL: Por que em inglês?**
+            
+            A ferramenta busca na base global **OpenAlex** (base oficial que a CAPES usa no novo Qualis).
+            Termos em inglês retornam MUITO mais revistas e métricas precisas.
+            
+            **Como escolher as palavras-chave:**
+            • Use 3-8 termos técnicos em inglês da sua área
+            • Combine: método + aplicação + área
+            • Use termos específicos, não genéricos
+            
+            **Exemplos bons:**
+            • "machine learning healthcare prediction"
+            • "CRISPR gene editing agriculture"
+            • "renewable energy sustainability"
+            
+            **Não use:**
+            • Frases longas em português
+            • Termos muito genéricos como "research", "study"
+            """
         )
         st.markdown("""
         <div class="input-note">
-        <strong>📌 Como escolher?</strong> Use termos técnicos em inglês.<br>
-        Ex: "machine learning healthcare prediction"
+        <strong>📌 Como escolher as palavras-chave?</strong><br>
+        • Use <strong>termos técnicos em inglês</strong> da sua área<br>
+        • Combine: <strong>método + aplicação + área</strong><br>
+        • Exemplos:<br>
+          - "machine learning healthcare prediction"<br>
+          - "CRISPR gene editing agriculture"<br>
+          - "renewable energy sustainability"<br>
+        • <strong>Não use:</strong> frases longas em português
         </div>
         """, unsafe_allow_html=True)
         
@@ -192,14 +274,37 @@ with st.form("dados_pesquisa", clear_on_submit=False):
             "🎯 Estratégia de Publicação",
             ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
              "📢 Máximo Impacto Social (Altimetria)", 
-             "📈 Máximo Tradicional (Fator de Impacto)"]
+             "📈 Máximo Tradicional (Fator de Impacto)"],
+            help="""
+            💡 **Qual estratégia escolher?**
+            
+            A escolha do foco depende dos seus **objetivos de carreira** e do seu **programa**:
+            
+            **⚖️ Equilibrado (RECOMENDADO):**
+            • Mais seguro e alinhado com a CAPES
+            • Boa pontuação em todos os procedimentos
+            • Ideal se não tem preferência específica
+            • Busca bom FI + Acesso Aberto quando possível
+            
+            **📢 Impacto Social:**
+            • Prioriza Open Access e divulgação
+            • Ideal para pesquisas com aplicação prática
+            • Áreas: Saúde Pública, Educação, Políticas Públicas
+            • Exige divulgação ativa pós-publicação
+            
+            **📈 Tradicional:**
+            • Foca em alto Fator de Impacto
+            • Ideal para prestígio acadêmico máximo
+            • Competir por posições em universidades de elite
+            • Aceita revistas fechadas (paywall)
+            """
         )
         st.markdown("""
         <div class="input-note">
-        <strong>📌 Qual escolher?</strong><br>
-        • <strong>⚖️ Equilibrado:</strong> Mais seguro<br>
-        • <strong>📢 Impacto Social:</strong> Máximo alcance<br>
-        • <strong>📈 Tradicional:</strong> Prestígio máximo
+        <strong>📌 Qual estratégia escolher?</strong><br>
+        • <strong>⚖️ Equilibrado:</strong> Mais seguro. Bom em todos os procedimentos. Recomendado para maioria.<br>
+        • <strong>📢 Impacto Social:</strong> Se sua pesquisa tem aplicação prática e você quer máximo alcance/divulgação.<br>
+        • <strong>📈 Tradicional:</strong> Se busca prestígio acadêmico máximo e quer competir por posições em universidades de elite.
         </div>
         """, unsafe_allow_html=True)
     
@@ -279,16 +384,22 @@ if submitted:
                     if is_oa:
                         melhores_oa.append(nome)
                     
-                    # Ícones
+                    # Ícones e textos
                     if is_oa and citacoes > 5000:
                         acesso_icon = "🟢"
+                        acesso_texto = "OA+Alto"
                         altimetria_icon = "🟢"
+                        altimetria_texto = "Alto"
                     elif is_oa:
                         acesso_icon = "🔵"
+                        acesso_texto = "OA"
                         altimetria_icon = "🔵"
+                        altimetria_texto = "Médio"
                     else:
                         acesso_icon = "🔴"
+                        acesso_texto = "Fechado"
                         altimetria_icon = "⚪"
+                        altimetria_texto = "Baixo"
                     
                     if fi > 10:
                         fi_class = "🔥"
@@ -304,11 +415,11 @@ if submitted:
                     dados.append({
                         "📊 Ranking": f"{destaque}#{i}",
                         "Revista": nome,
-                        "🚪 Acesso": f"{acesso_icon}",
+                        "🚪 Acesso": f"{acesso_icon} {acesso_texto}",
                         "📈 FI": round(fi, 2),
                         "Class": fi_class,
                         "💬 Citações": formatar_numero(citacoes),
-                        "📢 Altimetria": altimetria_icon
+                        "📢 Altimetria": f"{altimetria_icon} {altimetria_texto}"
                     })
                 
                 # DataFrame
@@ -324,7 +435,7 @@ if submitted:
                 # Legenda
                 st.markdown("""
                 <div style="font-size: 0.85rem; color: #4a5568; padding: 0.75rem; background: white; border-radius: 8px; margin-top: 0.5rem;">
-                <strong>Legenda:</strong> 🟢=OA+Alto | 🔵=OA | 🔴=Fechado | 🔥=Excelente | ⭐=Muito Bom | ✅=Bom | 📌=Aceitável | 🏆=Top 3<br>
+                <strong>Legenda:</strong> 🟢=OA+Alto Impacto | 🔵=OA | 🔴=Fechado | 🔥=Excelente | ⭐=Muito Bom | ✅=Bom | 📌=Aceitável | 🏆=Top 3<br>
                 <strong>Altimetria:</strong> 🟢=Alto | 🔵=Médio | ⚪=Baixo
                 </div>
                 """, unsafe_allow_html=True)
