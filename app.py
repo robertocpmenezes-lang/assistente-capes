@@ -86,14 +86,20 @@ st.markdown("""
         width: 100%;
     }
     
-    /* Destaque dos campos do formulário */
-    .form-field {
-        background: white !important;
+    /* Destaque dos campos - forma correta */
+    div[data-testid="stTextInput"] > div > input,
+    div[data-testid="stTextArea"] > div > textarea,
+    div[data-testid="stSelectbox"] > div > div {
         border: 2px solid #667eea !important;
-        border-radius: 8px !important;
-        padding: 1rem !important;
-        margin-bottom: 1rem !important;
+        background-color: #fff !important;
         box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15) !important;
+    }
+    
+    div[data-testid="stTextInput"] > div > input:focus,
+    div[data-testid="stTextArea"] > div > textarea:focus,
+    div[data-testid="stSelectbox"] > div > div:focus {
+        border: 2px solid #764ba2 !important;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
     }
     
     /* Tabela unificada */
@@ -148,13 +154,13 @@ st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028 | Ciênc
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Entenda a Avaliação CAPES</div>', unsafe_allow_html=True)
 
-with st.expander(" Clique para entender os 3 Procedimentos e Estratégias", expanded=False):
+with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", expanded=False):
     st.markdown("""
     ### 🔍 Como Funciona a Avaliação CAPES 2025-2028
     
     A CAPES avalia os programas de pós-graduação através de **3 procedimentos complementares**:
     
-    #### ** Procedimento 1: Métricas do Periódico (Qualis)**
+    #### **📊 Procedimento 1: Métricas do Periódico (Qualis)**
     - **O que avalia:** A qualidade da REVISTA onde você publica
     - **Como mede:** Fator de Impacto, Quartil (Q1-Q4), Citações
     - **Base de dados:** OpenAlex (substituiu o JCR/Scopus pagos)
@@ -162,7 +168,7 @@ with st.expander(" Clique para entender os 3 Procedimentos e Estratégias", expa
       - Exatas/Saúde: Excelente >3.0 | Bom >1.5 | Aceitável >0.5
       - Humanas: Excelente >1.5 | Bom >0.5 | Aceitável >0.2
     
-    #### ** Procedimento 2: Impacto Social (Altimetria)**
+    #### **📢 Procedimento 2: Impacto Social (Altimetria)**
     - **O que avalia:** O impacto do SEU ARTIGO na sociedade
     - **Como mede:** Downloads, menções em redes sociais, compartilhamentos, citações em políticas públicas
     - **Dica crucial:** Artigos em Acesso Aberto têm MUITO mais alcance!
@@ -176,7 +182,7 @@ with st.expander(" Clique para entender os 3 Procedimentos e Estratégias", expa
     
     ### 🎯 Os 3 Tipos de Estratégia
     
-    **️ 1. Equilibrado:** Mais seguro e recomendado. Boa pontuação em todos os procedimentos.
+    **⚖️ 1. Equilibrado:** Mais seguro e recomendado. Boa pontuação em todos os procedimentos.
     
     **📢 2. Impacto Social:** Prioriza Open Access e divulgação. Ideal para pesquisas com aplicação prática.
     
@@ -184,7 +190,7 @@ with st.expander(" Clique para entender os 3 Procedimentos e Estratégias", expa
     """)
 
 # ==============================================================================
-# FORMULÁRIO COM NOTAS EXPLICATIVAS E DESTAQUE
+# FORMULÁRIO COM NOTAS EXPLICATIVAS
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Dados da Produção Intelectual</div>', unsafe_allow_html=True)
 
@@ -199,14 +205,10 @@ with st.form("dados_pesquisa", clear_on_submit=False):
     col1, col2 = st.columns(2)
     
     with col1:
-        # Campo destacado com borda
-        st.markdown('<div class="form-field">', unsafe_allow_html=True)
         titulo = st.text_input(
             "📝 Título do Artigo ou Tema da Pesquisa",
-            help=" O título ajuda a ferramenta a contextualizar a relevância temática da sua pesquisa. Isso é fundamental para o Procedimento 3 (Avaliação Qualitativa), onde os consultores da CAPES analisam a coerência e o avanço do conhecimento na área."
+            help="💡 O título ajuda a ferramenta a contextualizar a relevância temática da sua pesquisa. Isso é fundamental para o Procedimento 3 (Avaliação Qualitativa), onde os consultores da CAPES analisam a coerência e o avanço do conhecimento na área."
         )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
         st.markdown("""
         <div class="input-note">
         <strong>📌 Por que isso importa?</strong> O título define o contexto temático. 
@@ -214,8 +216,6 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         </div>
         """, unsafe_allow_html=True)
         
-        # Campo destacado com borda
-        st.markdown('<div class="form-field">', unsafe_allow_html=True)
         area_capes = st.selectbox(
             "📚 Grande Área de Avaliação CAPES",
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
@@ -223,8 +223,6 @@ with st.form("dados_pesquisa", clear_on_submit=False):
              "Linguística, Letras e Artes", "Ciências Agrárias"],
             help="💡 Cada área possui um Documento de Área específico que pondera de forma diferente os Procedimentos 1, 2 e 3. Exatas/Saúde valorizam mais o FI alto. Humanas valorizam mais o Proc. 3 (Qualitativo)."
         )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
         st.markdown("""
         <div class="input-note">
         <strong>📌 Como isso afeta a avaliação?</strong> 
@@ -235,16 +233,12 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         """, unsafe_allow_html=True)
 
     with col2:
-        # Campo destacado com borda
-        st.markdown('<div class="form-field">', unsafe_allow_html=True)
         resumo = st.text_area(
             "🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
             height=140,
             placeholder="Ex: machine learning diabetes prediction healthcare genomics",
             help="💡 CRUCIAL: Use 3-8 palavras-chave em INGLÊS. A ferramenta busca na base global OpenAlex. Termos em inglês retornam MUITO mais revistas e métricas precisas. A OpenAlex é a base oficial que a CAPES usa no novo Qualis."
         )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
         st.markdown("""
         <div class="input-note">
         <strong>📌 Como escolher as palavras-chave?</strong><br>
@@ -258,8 +252,6 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         </div>
         """, unsafe_allow_html=True)
         
-        # Campo destacado com borda
-        st.markdown('<div class="form-field">', unsafe_allow_html=True)
         foco = st.selectbox(
             "🎯 Estratégia de Publicação",
             ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
@@ -267,12 +259,10 @@ with st.form("dados_pesquisa", clear_on_submit=False):
              "📈 Máximo Tradicional (Fator de Impacto)"],
             help="💡 A escolha do foco depende dos seus objetivos de carreira e do seu programa. O Equilibrado é o mais seguro e recomendado pela CAPES. O Impacto Social prioriza Open Access. O Tradicional foca em prestígio acadêmico."
         )
-        st.markdown('</div>', unsafe_allow_html=True)
-        
         st.markdown("""
         <div class="input-note">
         <strong>📌 Qual estratégia escolher?</strong><br>
-        • <strong>️ Equilibrado:</strong> Mais seguro. Bom em todos os procedimentos. Recomendado para maioria.<br>
+        • <strong>⚖️ Equilibrado:</strong> Mais seguro. Bom em todos os procedimentos. Recomendado para maioria.<br>
         • <strong>📢 Impacto Social:</strong> Se sua pesquisa tem aplicação prática e você quer máximo alcance/divulgação.<br>
         • <strong>📈 Tradicional:</strong> Se busca prestígio acadêmico máximo e quer competir por posições em universidades de elite.
         </div>
@@ -334,7 +324,7 @@ if submitted:
                 st.markdown('<div class="alert-box alert-success">✓ <strong>Relatório gerado com sucesso!</strong></div>', unsafe_allow_html=True)
                 
                 # Tabela Comparativa Unificada
-                st.markdown('<div class="section-title"> Tabela Comparativa de Revistas</div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-title">✦ Tabela Comparativa de Revistas</div>', unsafe_allow_html=True)
                 
                 st.markdown("""
                 <div class="alert-box alert-info">
@@ -358,13 +348,13 @@ if submitted:
                     
                     # Ícones
                     if is_oa and citacoes > 5000:
-                        icone_acesso = ""
+                        icone_acesso = "🟢"
                         texto_acesso = "OA"
                         altimetria = "🟢"
                     elif is_oa:
                         icone_acesso = "🔵"
                         texto_acesso = "OA"
-                        altimetria = ""
+                        altimetria = "🔵"
                     else:
                         icone_acesso = "🔴"
                         texto_acesso = "Fech"
@@ -391,7 +381,7 @@ if submitted:
                         "altimetria": altimetria
                     })
                 
-                # Tabela HTML unificada (cabeçalho + dados juntos)
+                # Tabela HTML unificada
                 html_tabela = '''
                 <div class="tabela-container">
                 <table class="tabela-completa">
@@ -434,7 +424,7 @@ if submitted:
                 st.markdown("""
                 <div style="font-size: 0.85rem; color: #4a5568; margin-top: 0.5rem; padding: 0.75rem; background: white; border-radius: 8px;">
                 <strong>Legenda:</strong> 🟢=OA+Alto Impacto | 🔵=OA | 🔴=Fechado | 🔥=Excelente | ⭐=Muito Bom | ✅=Bom | 📌=Aceitável | 🏆=Top 3<br>
-                <strong>Altimetria:</strong> 🟢=Alto | =Médio | ⚪=Baixo
+                <strong>Altimetria:</strong> 🟢=Alto | 🔵=Médio | ⚪=Baixo
                 </div>
                 """, unsafe_allow_html=True)
                 
@@ -484,7 +474,7 @@ if submitted:
                         """)
                     else:
                         st.info(f"""
-                        ** Impacto Moderado**
+                        **📌 Impacto Moderado**
                         
                         Maior FI: **{max_fi:.2f}**
                         
@@ -565,7 +555,7 @@ if submitted:
                 else:
                     st.markdown("""
                     <div class="alert-box alert-success">
-                    <h4 style="margin-top: 0;"> Estratégia de Máximo Impacto Tradicional</h4>
+                    <h4 style="margin-top: 0;">📈 Estratégia de Máximo Impacto Tradicional</h4>
                     <p>Você prioriza o <strong>Procedimento 1 (Fator de Impacto)</strong> da CAPES.</p>
                     <p><strong>O que isso significa:</strong></p>
                     <ul>
@@ -591,7 +581,7 @@ if submitted:
                 with col1:
                     st.markdown("""
                     <div class="alert-box alert-info">
-                    <h4 style="margin-top: 0;"> Procedimento 1</h4>
+                    <h4 style="margin-top: 0;">📊 Procedimento 1</h4>
                     <p><strong>Métricas do Periódico</strong></p>
                     <p><strong>O que a CAPES avalia:</strong> A qualidade da revista onde você publica, usando a OpenAlex como base oficial (substituindo o JCR/Scopus pagos).</p>
                     <p><strong>Referências por Área:</strong></p>
@@ -633,9 +623,9 @@ if submitted:
                     else:
                         st.markdown("""
                         <div class="alert-box alert-warning">
-                        <h4 style="margin-top: 0;"> Procedimento 2</h4>
+                        <h4 style="margin-top: 0;">📢 Procedimento 2</h4>
                         <p><strong>Impacto Social (Altimetria)</strong></p>
-                        <p style="color: #742a2a;"><strong> Atenção:</strong> Todas as revistas sugeridas possuem paywall (acesso restrito).</p>
+                        <p style="color: #742a2a;"><strong>⚠ Atenção:</strong> Todas as revistas sugeridas possuem paywall (acesso restrito).</p>
                         <p><strong>Problema:</strong></p>
                         <ul style="padding-left: 1rem; margin: 0;">
                             <li>Poucas pessoas conseguirão ler seu artigo</li>
