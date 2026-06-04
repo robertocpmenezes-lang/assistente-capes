@@ -85,62 +85,6 @@ st.markdown("""
         font-weight: 600;
         width: 100%;
     }
-    
-    /* Tabela simples e funcional */
-    .revista-row {
-        background: white;
-        padding: 1.5rem;
-        margin: 1rem 0;
-        border-radius: 10px;
-        border-left: 5px solid #667eea;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    
-    .revista-row.oa-high { border-left-color: #48bb78; }
-    .revista-row.oa-medium { border-left-color: #4299e1; }
-    .revista-row.closed { border-left-color: #fc8181; }
-    
-    .metricas-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .metric-box {
-        background: #f7fafc;
-        padding: 1rem;
-        border-radius: 8px;
-        text-align: center;
-    }
-    
-    .metric-label {
-        font-size: 0.8rem;
-        color: #718096;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-    
-    .metric-value {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #2d3748;
-    }
-    
-    .badge {
-        display: inline-block;
-        padding: 0.3rem 0.7rem;
-        border-radius: 15px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        margin-right: 0.5rem;
-    }
-    
-    .badge-yes { background: #c6f6d5; color: #22543d; }
-    .badge-no { background: #fed7d7; color: #742a2a; }
-    .badge-alt-high { background: #c6f6d5; color: #22543d; }
-    .badge-alt-medium { background: #bee3f8; color: #2a4365; }
-    .badge-alt-low { background: #e2e8f0; color: #718096; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -322,22 +266,18 @@ if submitted:
             if revistas:
                 st.markdown('<div class="alert-box alert-success">✓ <strong>Relatório gerado com sucesso!</strong></div>', unsafe_allow_html=True)
                 
-                # Tabela Comparativa
+                # Tabela Comparativa Compacta
                 st.markdown('<div class="section-title">✦ Tabela Comparativa de Revistas</div>', unsafe_allow_html=True)
                 
                 st.markdown("""
                 <div class="alert-box alert-info">
-                <strong>📊 Como ler esta tabela:</strong><br>
-                • A tabela está <strong>ordenada por relevância</strong> (#1 é a mais relevante para sua busca)<br>
-                • <strong>🟢 Open Access + Alto Impacto:</strong> Melhor opção (verde) - equilibra FI e altimetria<br>
-                • <strong>🔵 Open Access:</strong> Boa para altimetria (azul) - maximize compartilhamentos<br>
-                • <strong>🔴 Fechado:</strong> Paywall, mas alto FI (vermelho) - deposite preprint para compensar<br>
-                • <strong>Fator de Impacto:</strong> Quanto maior, melhor. Exatas/Saúde: >3.0 excelente | Humanas: >1.5 excelente
+                <strong>📊 Como ler:</strong> Tabela ordenada por relevância | 🟢 OA+Alto = melhor | 🔵 OA = boa altimetria | 🔴 Fechado = deposite preprint
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Cards das Revistas (layout visual)
+                # Preparar dados da tabela
                 melhores_oa = []
+                dados_tabela = []
                 
                 for i, rev in enumerate(revistas, 1):
                     nome = rev.get("display_name", "N/A")
@@ -349,56 +289,86 @@ if submitted:
                     if is_oa:
                         melhores_oa.append(nome)
                     
-                    # Determinar classe e badges
+                    # Ícones e classificações
                     if is_oa and citacoes > 5000:
-                        card_class = "oa-high"
-                        alt_badge = '<span class="badge badge-alt-high">🔥 Alto</span>'
+                        icone_acesso = "🟢"
+                        texto_acesso = "OA"
+                        altimetria = "🔥"
+                        cor_alt = "🟢"
                     elif is_oa:
-                        card_class = "oa-medium"
-                        alt_badge = '<span class="badge badge-alt-medium">● Médio</span>'
+                        icone_acesso = "🔵"
+                        texto_acesso = "OA"
+                        altimetria = "●"
+                        cor_alt = "🔵"
                     else:
-                        card_class = "closed"
-                        alt_badge = '<span class="badge badge-alt-low">○ Baixo</span>'
-                    
-                    acesso_badge = '<span class="badge badge-yes">✓ Open Access</span>' if is_oa else '<span class="badge badge-no">✕ Fechado</span>'
+                        icone_acesso = "🔴"
+                        texto_acesso = "Fech"
+                        altimetria = "○"
+                        cor_alt = "⚪"
                     
                     if fi > 10:
-                        fi_class = "🔥 Excelente"
+                        fi_class = "🔥"
                     elif fi > 5:
-                        fi_class = "⭐ Muito Bom"
+                        fi_class = "⭐"
                     elif fi > 2:
-                        fi_class = "✅ Bom"
+                        fi_class = "✅"
                     else:
-                        fi_class = "📌 Aceitável"
+                        fi_class = "📌"
                     
-                    destaque = "🏆 " if i <= 3 else ""
+                    # Destaque top 3
+                    destaque = "🏆" if i <= 3 else ""
                     
-                    html_card = f'''
-                    <div class="revista-row {card_class}">
-                        <h3 style="margin: 0 0 1rem 0; color: #2d3748;">{destaque}#{i} - {nome}</h3>
-                        <div style="margin-bottom: 1rem;">{acesso_badge} {alt_badge}</div>
-                        <div class="metricas-grid">
-                            <div class="metric-box">
-                                <div class="metric-label">Fator de Impacto</div>
-                                <div class="metric-value" style="color: {"#dd6b20" if fi > 5 else "#4a5568"};">{fi:.2f}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Classificação</div>
-                                <div class="metric-value">{fi_class}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Citações</div>
-                                <div class="metric-value">{formatar_numero(citacoes)}</div>
-                            </div>
-                            <div class="metric-box">
-                                <div class="metric-label">Ranking</div>
-                                <div class="metric-value">#{i}</div>
-                            </div>
-                        </div>
-                    </div>
-                    '''
-                    
-                    st.markdown(html_card, unsafe_allow_html=True)
+                    dados_tabela.append({
+                        "📊": f"{destaque}#{i}",
+                        "Revista": nome,
+                        "🚪": f"{icone_acesso} {texto_acesso}",
+                        "📈 FI": f"{fi:.2f}",
+                        "": fi_class,
+                        "💬": formatar_numero(citacoes),
+                        "📢": f"{cor_alt} {altimetria}"
+                    })
+                
+                # Criar colunas para tabela compacta
+                st.markdown("""
+                <div style="background: white; border-radius: 8px; padding: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                            <th style="padding: 0.75rem; text-align: left; border-radius: 8px 0 0 0;">Ranking</th>
+                            <th style="padding: 0.75rem; text-align: left;">Revista</th>
+                            <th style="padding: 0.75rem; text-align: center;">Acesso</th>
+                            <th style="padding: 0.75rem; text-align: center;">FI</th>
+                            <th style="padding: 0.75rem; text-align: center;">Class</th>
+                            <th style="padding: 0.75rem; text-align: center;">Citações</th>
+                            <th style="padding: 0.75rem; text-align: center; border-radius: 0 8px 0 0;">Altimetria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                """, unsafe_allow_html=True)
+                
+                for idx, row in enumerate(dados_tabela):
+                    bg_color = "#f7fafc" if idx % 2 == 0 else "white"
+                    st.markdown(f"""
+                    <tr style="background: {bg_color}; border-bottom: 1px solid #e2e8f0;">
+                        <td style="padding: 0.75rem;"><strong>{row["📊"]}</strong></td>
+                        <td style="padding: 0.75rem;"><strong>{row["Revista"]}</strong></td>
+                        <td style="padding: 0.75rem; text-align: center;">{row["🚪"]}</td>
+                        <td style="padding: 0.75rem; text-align: center;"><strong>{row["📈 FI"]}</strong></td>
+                        <td style="padding: 0.75rem; text-align: center;">{row["📊"]}</td>
+                        <td style="padding: 0.75rem; text-align: center;">{row["💬"]}</td>
+                        <td style="padding: 0.75rem; text-align: center; font-size: 1.2rem;">{row["📢"]}</td>
+                    </tr>
+                    """, unsafe_allow_html=True)
+                
+                st.markdown("</tbody></table></div>", unsafe_allow_html=True)
+                
+                # Legenda
+                st.markdown("""
+                <div style="font-size: 0.85rem; color: #4a5568; margin-top: 0.5rem;">
+                <strong>Legenda:</strong> 🟢=OA+Alto Impacto | 🔵=OA | 🔴=Fechado | 🔥=Excelente | ⭐=Muito Bom | ✅=Bom | 📌=Aceitável<br>
+                <strong>Altimetria:</strong> 🟢=Alto | 🔵●=Médio | ⚪○=Baixo
+                </div>
+                """, unsafe_allow_html=True)
                 
                 # Resumo Visual
                 st.markdown('<div class="section-title">▸ Resumo Visual</div>', unsafe_allow_html=True)
@@ -479,7 +449,7 @@ if submitted:
                         <li>Prioriza <strong>Acesso Aberto</strong> quando possível (Proc. 2)</li>
                         <li>Valoriza <strong>Ciência Aberta</strong> e transparência (Proc. 3)</li>
                     </ul>
-                    <p><strong>Recomendação:</strong> Na tabela acima, priorize as revistas marcadas com <strong>✓ Open Access</strong> que tenham Fator de Impacto acima de 1.0. Elas oferecem o melhor equilíbrio entre os 3 procedimentos.</p>
+                    <p><strong>Recomendação:</strong> Na tabela acima, priorize as revistas marcadas com <strong>🟢 OA</strong> que tenham Fator de Impacto acima de 1.0. Elas oferecem o melhor equilíbrio entre os 3 procedimentos.</p>
                     </div>
                     """, unsafe_allow_html=True)
                     
@@ -536,7 +506,7 @@ if submitted:
                         <li>Ideal para carreiras acadêmicas de elite</li>
                     </ul>
                     <p><strong>Recomendação:</strong> Na tabela acima, priorize revistas com FI acima de 3.0 (Exatas/Saúde) ou 1.0 (Humanas).</p>
-                    <p><strong>Compensação necessária:</strong> Revistas de alto impacto geralmente são fechadas (✕). Para não perder pontos no Proc. 2 (Altimetria), você DEVE:</p>
+                    <p><strong>Compensação necessária:</strong> Revistas de alto impacto geralmente são fechadas (🔴). Para não perder pontos no Proc. 2 (Altimetria), você DEVE:</p>
                     <ol>
                         <li>Depositar o <strong>preprint</strong> no arXiv, bioRxiv ou SciELO Preprints</li>
                         <li>Compartilhar o link do preprint nas redes sociais</li>
