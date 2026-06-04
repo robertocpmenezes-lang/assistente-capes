@@ -798,3 +798,19 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+# ==============================================================================
+# FOOTER COMPLETO
+# ==============================================================================
+st.markdown("---")
+st.markdown("""
+<div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: #e2e8f0; border-radius: 12px; text-align: center;">
+    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0; line-height: 1.6;">
+        Desenvolvida com bases de dados abertas (OpenAlex) e alinhada às Diretrizes Comuns da CAPES (Ciclo 2025-2028).<br>
+        Esta ferramenta não possui vinculação oficial com a CAPES ou MEC.
+    </p>
+    <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
+        <em>Iniciativa de promoção da Ciência Aberta e Transparência na Pós-Graduação Brasileira</em>
+    </p>
+</div>
+""", unsafe_allow_html=True)
