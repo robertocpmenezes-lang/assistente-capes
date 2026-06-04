@@ -104,11 +104,6 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
         background-color: #f7fafc !important;
     }
-    
-    /* Tooltip melhorado */
-    .stTooltipHoverTarget {
-        cursor: help;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -476,69 +471,330 @@ if submitted:
                 else:
                     st.success("**📈 Tradicional**\n\nPriorize maior FI na tabela.")
                 
-                # Procedimentos
-                st.markdown('<div class="section-title">▸ Procedimentos</div>', unsafe_allow_html=True)
+                # ==============================================================================
+                # GUIA DETALHADO DOS 3 PROCEDIMENTOS CAPES
+                # ==============================================================================
+                st.markdown('<div class="section-title">▸ Guia Detalhado dos 3 Procedimentos CAPES</div>', unsafe_allow_html=True)
                 
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    st.info("""
-                    **📊 Proc. 1 - Métricas**
-                    
-                    **Exatas/Saúde:**
-                    - Excelente: > 3.0
-                    - Bom: 1.5-3.0
-                    
-                    **Humanas:**
-                    - Excelente: > 1.5
-                    - Bom: 0.5-1.5
-                    """)
+                    st.markdown("""
+                    <div class="alert-box alert-info">
+                    <h4 style="margin-top: 0;">📊 Procedimento 1</h4>
+                    <p><strong>Métricas do Periódico</strong></p>
+                    <p><strong>O que a CAPES avalia:</strong> A qualidade da revista onde você publica, usando a OpenAlex como base oficial (substituindo o JCR/Scopus pagos).</p>
+                    <p><strong>Referências por Área:</strong></p>
+                    <p><strong>Exatas e Saúde:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li>Excelente: FI > 3.0</li>
+                        <li>Bom: FI entre 1.5 e 3.0</li>
+                        <li>Aceitável: FI entre 0.5 e 1.5</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>Humanas:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li>Excelente: FI > 1.5</li>
+                        <li>Bom: FI entre 0.5 e 1.5</li>
+                        <li>Aceitável: FI entre 0.2 e 0.5</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>Dica:</strong> Além do FI, a CAPES considera o Quartil (Q1, Q2, Q3, Q4). Q1 e Q2 têm maior pontuação.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
                 with col2:
                     if melhores_oa:
-                        st.success("""
-                        **📢 Proc. 2 - Altimetria
-                        
-                        ✓ Tem Open Access!
-                        
-                        **Ação:** Divulgue!
-                        """)
+                        st.markdown("""
+                        <div class="alert-box alert-success">
+                        <h4 style="margin-top: 0;">📢 Procedimento 2</h4>
+                        <p><strong>Impacto Social (Altimetria)</strong></p>
+                        <p style="color: #22543d;"><strong>✓ Vantagem:</strong> Você tem revistas Open Access na tabela!</p>
+                        <p><strong>O que a CAPES avalia:</strong> O impacto do SEU ARTIGO na sociedade, medido por downloads, menções em redes sociais, compartilhamentos e citações em políticas públicas.</p>
+                        <p><strong>Benefícios do Open Access:</strong></p>
+                        <ul style="padding-left: 1rem; margin: 0;">
+                            <li>Artigo gratuito para todos</li>
+                            <li>Mais downloads e visualizações</li>
+                            <li>Mais compartilhamentos no Twitter, LinkedIn</li>
+                            <li>Mais salvamentos no Mendeley, Zotero</li>
+                            <li>Possibilidade de ser citado em políticas públicas</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;"><strong>Ação necessária:</strong> Após a publicação, compartilhe ativamente o link do artigo em suas redes profissionais. Isso alimenta diretamente o score de Altimetria!</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                     else:
-                        st.warning("""
-                        **📢 Proc. 2 - Altimetria
-                        
-                        ⚠ Fechadas
-                        
-                        **Solução:** Preprint!
-                        """)
+                        st.markdown("""
+                        <div class="alert-box alert-warning">
+                        <h4 style="margin-top: 0;">📢 Procedimento 2</h4>
+                        <p><strong>Impacto Social (Altimetria)</strong></p>
+                        <p style="color: #742a2a;"><strong>⚠ Atenção:</strong> Todas as revistas sugeridas possuem paywall (acesso restrito).</p>
+                        <p><strong>Problema:</strong></p>
+                        <ul style="padding-left: 1rem; margin: 0;">
+                            <li>Poucas pessoas conseguirão ler seu artigo</li>
+                            <li>Menos downloads = menos compartilhamentos = menos altimetria</li>
+                            <li>Risco de baixa pontuação no Proc. 2</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;"><strong>Solução OBRIGATÓRIA:</strong></p>
+                        <ol style="padding-left: 1rem; margin: 0;">
+                            <li>Deposite o preprint em repositório aberto</li>
+                            <li>Compartilhe o link do preprint</li>
+                            <li>Use redes sociais ativamente</li>
+                        </ol>
+                        </div>
+                        """, unsafe_allow_html=True)
                 
                 with col3:
-                    st.info("""
-                    **✦ Proc. 3 - Ciência Aberta
-                    
-                    **Ações:**
-                    - Dados no Zenodo
-                    - Citar DOI
-                    - Preprints
-                    
-                    💡 +30% citações!
-                    """)
+                    st.markdown("""
+                    <div class="alert-box alert-info">
+                    <h4 style="margin-top: 0;">✦ Procedimento 3</h4>
+                    <p><strong>Ciência Aberta e Qualitativo</strong></p>
+                    <p><strong>O que a CAPES avalia:</strong> A relevância e transparência da pesquisa, analisada por pares consultores.</p>
+                    <p><strong>Ações que contam MUITOS pontos:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li><strong>Disponibilizar dados brutos</strong> em repositórios abertos:
+                            <ul>
+                                <li><a href="https://zenodo.org" target="_blank">Zenodo</a> (gratuito, gera DOI)</li>
+                                <li><a href="https://osf.io" target="_blank">OSF</a> (gratuito)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Citar o DOI dos dados</strong> no artigo publicado</li>
+                        <li><strong>Publicar preprints</strong> (versões prévias)</li>
+                        <li><strong>Usar software livre</strong> e abrir códigos (GitHub)</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>💡 Dica de ouro:</strong> Pesquisadores que disponibilizam dados abertos têm até <strong>30% mais citações</strong> em média!</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
-                # Checklist
-                st.markdown('<div class="section-title">▸ Checklist</div>', unsafe_allow_html=True)
-                st.success("""
-                **📋 Antes:** [ ] ORCID | [ ] Dados  
-                **📤 Durante:** [ ] Preprint | [ ] DOI  
-                **📢 Após:** [ ] Divulgar | [ ] Monitorar
+                # ==============================================================================
+                # CHECKLIST DETALHADO
+                # ==============================================================================
+                st.markdown('<div class="section-title">▸ Checklist de Ação Passo a Passo</div>', unsafe_allow_html=True)
+                st.markdown("""
+                <div class="alert-box alert-success">
+                <h4 style="margin-top: 0;">📋 Antes da Submissão</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Vincular ORCID ao Lattes</strong> - A CAPES cruza dados via ORCID para validar autoria e impacto. É obrigatório!</li>
+                    <li><strong>Preparar dados para repositório</strong> - Organize dados brutos, códigos e metadados. Anonimize dados sensíveis se houver.</li>
+                    <li><strong>Escolher repositório</strong> - Zenodo (recomendado para iniciantes) ou OSF.</li>
+                </ul>
+                
+                <h4 style="margin: 1rem 0 0.5rem 0;">📤 Durante a Submissão</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Depositar preprint</strong> (se a revista permitir) - SciELO Preprints, arXiv, bioRxiv conforme sua área.</li>
+                    <li><strong>Subir dados no Zenodo/OSF</strong> - Obtenha o DOI dos dados.</li>
+                    <li><strong>Incluir no manuscrito</strong> - Cite o DOI dos dados: "Data available at: [DOI]"</li>
+                </ul>
+                
+                <h4 style="margin: 1rem 0 0.5rem 0;">📢 Após a Publicação (CRUCIAL!)</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Atualizar preprint</strong> com link da versão publicada</li>
+                    <li><strong>Divulgar nas redes sociais</strong>:
+                        <ul>
+                            <li>LinkedIn: Post profissional explicando a relevância</li>
+                            <li>Twitter/X: Thread resumindo os principais achados</li>
+                            <li>ResearchGate: Upload da versão autor (se permitido)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Enviar para mailing</strong> da área e grupos de pesquisa</li>
+                    <li><strong>Compartilhar com assessoria de comunicação</strong> da universidade</li>
+                    <li><strong>Monitorar altimetria</strong> em <a href="https://www.altmetric.com" target="_blank">altmetric.com</a></li>
+                </ul>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # ==============================================================================
+                # BOTÃO DE DOWNLOAD
+                # ==============================================================================
+                st.markdown('<div class="section-title">▸ Download do Relatório</div>', unsafe_allow_html=True)
+                
+                # Preparar conteúdo do relatório
+                relatorio_texto = f"""
+RELATÓRIO ESTRATÉGICO DE PUBLICAÇÃO CAPES 2025-2028
+====================================================
+
+Pesquisa: {titulo}
+Área CAPES: {area_capes}
+Estratégia Escolhida: {foco}
+
+================================================================================
+REVISTAS SUGERIDAS (Ordenadas por Relevância)
+================================================================================
+
+"""
+                
+                for idx, row in enumerate(dados, 1):
+                    relatorio_texto += f"""
+{row['📊 Ranking']} - {row['Revista']}
+   Acesso: {row['🚪 Acesso']}
+   Fator de Impacto: {row['📈 FI']}
+   Classificação: {row['Class']}
+   Citações: {row['💬 Citações']}
+   Altimetria: {row['📢 Altimetria']}
+
+"""
+                
+                relatorio_texto += f"""
+================================================================================
+RESUMO VISUAL
+================================================================================
+
+Open Access Encontradas: {len(melhores_oa)} de {len(revistas)}
+Maior Fator de Impacto: {max([rev.get('summary_stats', {{}}).get('2yr_mean_citedness', 0) or 0 for rev in revistas]):.2f}
+
+"""
+                
+                if melhores_oa:
+                    relatorio_texto += "Revistas Open Access:\n"
+                    for rev in melhores_oa:
+                        relatorio_texto += f"  - {rev}\n"
+                
+                relatorio_texto += f"""
+================================================================================
+ANÁLISE ESTRATÉGICA
+================================================================================
+
+Estratégia: {foco}
+
+"""
+                
+                if "Equilibrado" in foco:
+                    if melhores_oa:
+                        relatorio_texto += f"✓ Equilibrado Recomendado\nPriorize: {', '.join(melhores_oa[:2])}\n"
+                    else:
+                        relatorio_texto += "⚠️ Sem Open Access. Deposite preprint!\n"
+                elif "Impacto" in foco:
+                    if melhores_oa:
+                        relatorio_texto += f"📢 Impacto Social\nPriorize: {', '.join(melhores_oa)}\nAção: Compartilhe ativamente nas redes!\n"
+                    else:
+                        relatorio_texto += "⚠️ Deposite preprint no SciELO/arXiv!\n"
+                else:
+                    relatorio_texto += "📈 Tradicional\nPriorize maior FI na tabela.\n"
+                
+                relatorio_texto += f"""
+================================================================================
+GUIA DOS PROCEDIMENTOS CAPES
+================================================================================
+
+📊 PROCEDIMENTO 1 - Métricas do Periódico
+O que avalia: Qualidade da revista (FI, Quartil, Citações)
+Base: OpenAlex (oficial CAPES)
+
+Referências Exatas/Saúde:
+  - Excelente: FI > 3.0
+  - Bom: FI 1.5-3.0
+  - Aceitável: FI 0.5-1.5
+
+Referências Humanas:
+  - Excelente: FI > 1.5
+  - Bom: FI 0.5-1.5
+  - Aceitável: FI 0.2-0.5
+
+📢 PROCEDIMENTO 2 - Impacto Social (Altimetria)
+O que avalia: Impacto do artigo na sociedade
+Mede: Downloads, menções, compartilhamentos
+
+"""
+                
+                if melhores_oa:
+                    relatorio_texto += "✓ Vantagem: Tem Open Access!\n"
+                    relatorio_texto += "Ação: Divulgue ativamente nas redes!\n"
+                else:
+                    relatorio_texto += "⚠ Atenção: Revistas fechadas\n"
+                    relatorio_texto += "Solução: Deposite preprint!\n"
+                
+                relatorio_texto += f"""
+✦ PROCEDIMENTO 3 - Ciência Aberta
+O que avalia: Relevância e transparência
+Ações importantes:
+  - Dados no Zenodo/OSF (gera DOI)
+  - Citar DOI dos dados no artigo
+  - Publicar preprints
+  - Código aberto (GitHub)
+
+💡 Dica: Dados abertos = +30% citações!
+
+================================================================================
+CHECKLIST DE AÇÃO
+================================================================================
+
+📋 ANTES DA SUBMISSÃO:
+  [ ] Vincular ORCID ao Lattes
+  [ ] Preparar dados para repositório
+  [ ] Escolher repositório (Zenodo ou OSF)
+
+📤 DURANTE A SUBMISSÃO:
+  [ ] Depositar preprint (se permitido)
+  [ ] Subir dados no Zenodo/OSF e obter DOI
+  [ ] Incluir DOI dos dados no manuscrito
+
+📢 APÓS A PUBLICAÇÃO:
+  [ ] Atualizar preprint com link da versão publicada
+  [ ] Divulgar no LinkedIn, Twitter/X, ResearchGate
+  [ ] Enviar para mailing da área
+  [ ] Compartilhar com assessoria de comunicação
+  [ ] Monitorar altimetria em altmetric.com
+
+================================================================================
+REPOSITÓRIOS RECOMENDADOS
+================================================================================
+
+• Zenodo (https://zenodo.org) - Gratuito, multidisciplinar, gera DOI
+• OSF (https://osf.io) - Gratuito, gerencia todo o projeto
+• SciELO Preprints - Multidisciplinar
+• arXiv - Exatas, Computação, Matemática
+• bioRxiv/medRxiv - Ciências da Vida e Saúde
+• SSRN - Ciências Sociais
+
+================================================================================
+INFORMAÇÕES IMPORTANTES
+================================================================================
+
+Esta ferramenta utiliza bases de dados abertas (OpenAlex) e está alinhada 
+às Diretrizes Comuns da CAPES (Ciclo 2025-2028).
+
+Esta ferramenta NÃO possui vinculação oficial com a CAPES ou MEC.
+As métricas são proxies calculadas pela OpenAlex, reconhecida internacionalmente 
+como alternativa aberta ao JCR.
+
+A decisão final de submissão é de responsabilidade exclusiva do pesquisador 
+e do coordenador do programa.
+
+================================================================================
+Gerado em: {pd.Timestamp.now().strftime('%d/%m/%Y %H:%M')}
+================================================================================
+"""
+                
+                st.download_button(
+                    label="📥 Baixar Relatório Completo (TXT)",
+                    data=relatorio_texto,
+                    file_name=f"Relatorio_CAPES_{titulo[:30].replace(' ', '_')}.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
+                
+                st.info("""
+                **💡 O que está incluído no download:**
+                - Lista completa das revistas sugeridas com todas as métricas
+                - Análise estratégica personalizada
+                - Guia detalhado dos 3 procedimentos CAPES
+                - Checklist de ação passo a passo
+                - Lista de repositórios recomendados
+                - Informações importantes sobre a ferramenta
                 """)
                 
             else:
                 st.warning("⚠️ Nenhuma revista. Tente termos em inglês.")
 
-# Footer
+# ==============================================================================
+# FOOTER COMPLETO
+# ==============================================================================
 st.markdown("""
 <div class="footer">
-    <p><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
-    <p>OpenAlex + CAPES 2025-2028 | Sem vínculo oficial</p>
+    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0; line-height: 1.6;">
+        Desenvolvida com bases de dados abertas (OpenAlex) e alinhada às Diretrizes Comuns da CAPES (Ciclo 2025-2028).<br>
+        Esta ferramenta não possui vinculação oficial com a CAPES ou MEC.
+    </p>
+    <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
+        <em>Iniciativa de promoção da Ciência Aberta e Transparência na Pós-Graduação Brasileira</em>
+    </p>
 </div>
 """, unsafe_allow_html=True)
