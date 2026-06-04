@@ -764,12 +764,12 @@ REVISTAS SUGERIDAS (Ordenadas por Relevancia)
 """
                 
                 for idx, row in enumerate(dados, 1):
-                    relatorio_texto += f"""
+    relatorio_texto += f"""
 {row['📊 Ranking']} - {row['Revista']}
    Acesso: {row['🚪 Acesso']}
    Fator de Impacto: {row['📈 FI']}
    Classificacao: {row['Class']}
-   Citacoes: {row['💬 Citacoes']}
+   Citacoes: {row['💬 Citações']}
    Altimetria: {row['📢 Altimetria']}
 
 """
