@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import urllib.parse
+import pandas as pd
 
 # ==============================================================================
 # CONFIGURAÇÃO
@@ -12,7 +13,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS Simplificado
+# CSS
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -87,18 +88,16 @@ st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028</p>', un
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Entenda a Avaliação CAPES</div>', unsafe_allow_html=True)
 
-with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", expanded=False):
+with st.expander("📚 Clique para entender os 3 Procedimentos", expanded=False):
     st.markdown("""
-    ### 🔍 Como Funciona a Avaliação CAPES 2025-2028
+    **📊 Procedimento 1:** Métricas do Periódico (Fator de Impacto)  
+    **📢 Procedimento 2:** Impacto Social (Altimetria)  
+    **✦ Procedimento 3:** Ciência Aberta e Qualitativo
     
-    **📊 Procedimento 1:** Métricas do Periódico (Fator de Impacto, Quartil)  
-    ** Procedimento 2:** Impacto Social (Altimetria, downloads, menções)  
-    **✦ Procedimento 3:** Ciência Aberta e Avaliação Qualitativa
-    
-    ### 🎯 Estratégias:
-    - **⚖️ Equilibrado:** Mais seguro - bom em todos os procedimentos
-    - **📢 Impacto Social:** Prioriza Open Access e divulgação
-    - **📈 Tradicional:** Foca em alto Fator de Impacto
+    ### Estratégias:
+    - **⚖️ Equilibrado:** Mais seguro
+    - **📢 Impacto Social:** Prioriza Open Access
+    - **📈 Tradicional:** Foca em alto FI
     """)
 
 # ==============================================================================
@@ -106,46 +105,32 @@ with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", 
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Dados da Produção Intelectual</div>', unsafe_allow_html=True)
 
-st.markdown("""
-<div class="alert-box alert-info">
-<strong> Dica:</strong> Preencha os campos abaixo. Quanto mais detalhado, mais precisas serão as recomendações!
-</div>
-""", unsafe_allow_html=True)
-
 with st.form("dados_pesquisa", clear_on_submit=False):
     col1, col2 = st.columns(2)
     
     with col1:
-        titulo = st.text_input(
-            "📝 Título do Artigo ou Tema",
-            help="💡 O título ajuda a contextualizar a relevância para o Procedimento 3 (Qualitativo)."
-        )
-        
+        titulo = st.text_input("📝 Título do Artigo ou Tema")
         area_capes = st.selectbox(
             "📚 Grande Área CAPES",
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
              "Engenharias", "Ciências Sociais Aplicadas", "Ciências Biológicas", 
-             "Linguística, Letras e Artes", "Ciências Agrárias"],
-            help="💡 Cada área pondera diferentemente os 3 procedimentos."
+             "Linguística, Letras e Artes", "Ciências Agrárias"]
         )
 
     with col2:
         resumo = st.text_area(
-            "🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
-            height=130,
-            placeholder="Ex: machine learning healthcare prediction",
-            help="💡 Use 3-8 palavras-chave em INGLÊS para buscar na base global OpenAlex."
+            "🔑 Palavras-chave (EM INGLÊS)",
+            height=120,
+            placeholder="Ex: machine learning healthcare prediction"
         )
-        
         foco = st.selectbox(
-            " Estratégia de Publicação",
-            ["️ Equilibrado (Impacto + Ciência Aberta)", 
+            "🎯 Estratégia",
+            ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
              "📢 Máximo Impacto Social (Altimetria)", 
-             " Máximo Tradicional (Fator de Impacto)"],
-            help="💡 Equilibrado é o mais seguro. Impacto Social prioriza Open Access. Tradicional foca em FI alto."
+             "📈 Máximo Tradicional (Fator de Impacto)"]
         )
     
-    submitted = st.form_submit_button(" Gerar Relatório com Grade Comparativa", use_container_width=True)
+    submitted = st.form_submit_button("🚀 Gerar Relatório", use_container_width=True)
 
 # ==============================================================================
 # FUNÇÕES
@@ -200,21 +185,11 @@ if submitted:
             if revistas:
                 st.success("✓ Relatório gerado!")
                 
-                # Grade Comparativa
-                st.markdown('<div class="section-title">✦ Grade Comparativa de Revistas</div>', unsafe_allow_html=True)
-                
-                st.info("""
-                ** Como usar:** Compare lado a lado - Fator de Impacto, Citações e Potencial de Altimetria.
-                -  Open Access + Alto Impacto (melhor)
-                - 🔵 Open Access (boa para altimetria)
-                - 🔴 Fechado (alto FI tradicional)
-                """)
-                
-                # Criar grid com columns nativo
+                # Preparar dados para tabela
+                dados_tabela = []
                 melhores_oa = []
-                cols = st.columns(2)  # 2 colunas
                 
-                for i, rev in enumerate(revistas):
+                for i, rev in enumerate(revistas, 1):
                     nome = rev.get("display_name", "N/A")
                     is_oa = rev.get("is_oa", False)
                     stats = rev.get("summary_stats", {})
@@ -224,79 +199,190 @@ if submitted:
                     if is_oa:
                         melhores_oa.append(nome)
                     
-                    # Determinar emoji e cor
+                    # Determinar cores e ícones
                     if is_oa and citacoes > 5000:
-                        card_emoji = "🟢"
-                        alt_text = "🔥 Alto"
+                        acesso_icon = "🟢"
+                        acesso_text = "Open Access"
+                        altimetria = "🔥 Alto"
+                        altimetria_cor = "🟢"
                     elif is_oa:
-                        card_emoji = "🔵"
-                        alt_text = "● Médio"
+                        acesso_icon = "🔵"
+                        acesso_text = "Open Access"
+                        altimetria = "● Médio"
+                        altimetria_cor = "🔵"
                     else:
-                        card_emoji = "🔴"
-                        alt_text = "○ Baixo"
+                        acesso_icon = "🔴"
+                        acesso_text = "Fechado"
+                        altimetria = "○ Baixo"
+                        altimetria_cor = "⚪"
                     
-                    acesso_text = "✓ Open Access" if is_oa else "✕ Fechado"
+                    # Classificar FI
+                    if fi > 10:
+                        fi_class = "🔥 Excelente"
+                    elif fi > 5:
+                        fi_class = "⭐ Muito Bom"
+                    elif fi > 2:
+                        fi_class = "✅ Bom"
+                    else:
+                        fi_class = "📌 Aceitável"
                     
-                    # Destaque top 3
-                    destaque = " " if i < 3 else ""
+                    dados_tabela.append({
+                        "📊 Ranking": f"#{i}",
+                        "Revista": nome,
+                        "🚪 Acesso": f"{acesso_icon} {acesso_text}",
+                        "📈 Fator de Impacto": f"{fi:.2f}",
+                        "Classificação FI": fi_class,
+                        "💬 Citações": formatar_numero(citacoes),
+                        "📢 Altimetria": f"{altimetria_cor} {altimetria}"
+                    })
+                
+                # Tabela Comparativa
+                st.markdown('<div class="section-title">✦ Tabela Comparativa de Revistas (Ordenada)</div>', unsafe_allow_html=True)
+                
+                st.info("""
+                **Como ler a tabela:**
+                - 🟢 **Open Access + Alto Impacto** = Melhor opção (verde)
+                - 🔵 **Open Access** = Boa para altimetria (azul)
+                - 🔴 **Fechado** = Paywall, mas alto FI (vermelho)
+                - A tabela está ordenada por relevância
+                """)
+                
+                # Criar DataFrame e exibir
+                df = pd.DataFrame(dados_tabela)
+                
+                # Configurar display da tabela
+                st.dataframe(
+                    df,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "📊 Ranking": st.column_config.TextColumn("📊 Ranking"),
+                        "Revista": st.column_config.TextColumn("Revista", width="medium"),
+                        "🚪 Acesso": st.column_config.TextColumn("🚪 Acesso"),
+                        "📈 Fator de Impacto": st.column_config.NumberColumn("📈 Fator de Impacto"),
+                        "Classificação FI": st.column_config.TextColumn("Classificação"),
+                        "💬 Citações": st.column_config.TextColumn("💬 Citações"),
+                        "📢 Altimetria": st.column_config.TextColumn("📢 Altimetria")
+                    }
+                )
+                
+                # Resumo Visual
+                st.markdown('<div class="section-title">▸ Resumo Visual</div>', unsafe_allow_html=True)
+                
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    total_oa = len(melhores_oa)
+                    if total_oa > 0:
+                        st.success(f"""
+                        **🟢 Open Access Encontradas**
+                        
+                        Total: **{total_oa}** de {len(revistas)}
+                        
+                        {chr(10).join([f"- {r}" for r in melhores_oa])}
+                        
+                        **Vantagem:** Melhor para Proc. 2 (Altimetria)
+                        """)
+                    else:
+                        st.warning(f"""
+                        **🔴 Nenhuma Open Access**
+                        
+                        Todas {len(revistas)} revistas são fechadas.
+                        
+                        **Solução:** Deposite preprint!
+                        """)
+                
+                with col2:
+                    max_fi = max([rev.get("summary_stats", {}).get("2yr_mean_citedness", 0) or 0 for rev in revistas])
+                    if max_fi > 10:
+                        st.success(f"""
+                        **🔥 Alto Impacto Encontrado**
+                        
+                        Maior FI: **{max_fi:.2f}**
+                        
+                        Excelente para Proc. 1 (Métricas)
+                        """)
+                    elif max_fi > 5:
+                        st.info(f"""
+                        **⭐ Bom Impacto**
+                        
+                        Maior FI: **{max_fi:.2f}**
+                        
+                        Muito bom para a área
+                        """)
+                    else:
+                        st.info(f"""
+                        **📌 Impacto Moderado**
+                        
+                        Maior FI: **{max_fi:.2f}**
+                        
+                        Aceitável para Humanas
+                        """)
+                
+                with col3:
+                    st.info(f"""
+                    **📊 Total de Revistas**
                     
-                    # Selecionar coluna
-                    col_idx = i % 2
+                    Encontradas: **{len(revistas)}**
                     
-                    with cols[col_idx]:
-                        st.markdown(f"### {destaque}{card_emoji} {nome}")
-                        
-                        # Badges
-                        badge_col1, badge_col2 = st.columns(2)
-                        with badge_col1:
-                            if is_oa:
-                                st.success(f"**{acesso_text}**", icon="✅")
-                            else:
-                                st.error(f"**{acesso_text}**", icon="❌")
-                        
-                        with badge_col2:
-                            st.info(f"**Altimetria: {alt_text}**", icon="📊")
-                        
-                        # Métricas
-                        metric_col1, metric_col2, metric_col3 = st.columns(3)
-                        with metric_col1:
-                            st.metric("Fator de Impacto", f"{fi:.2f}")
-                        with metric_col2:
-                            st.metric("Citações", formatar_numero(citacoes))
-                        with metric_col3:
-                            st.metric("Ranking", f"#{i+1}")
-                        
-                        st.markdown("---")
+                    Área: {area_capes}
+                    
+                    Estratégia: {foco}
+                    """)
                 
                 # Análise Estratégica
-                st.markdown('<div class="section-title"> Análise Estratégica</div>', unsafe_allow_html=True)
-                st.info(f"**Área:** {area_capes} | **Estratégia:** {foco}")
+                st.markdown('<div class="section-title">▸ Análise Estratégica</div>', unsafe_allow_html=True)
+                st.info(f"**Área CAPES:** {area_capes} | **Estratégia:** {foco}")
                 
                 if "Equilibrado" in foco:
-                    st.success("""
-                    **✓ Estratégia Equilibrada Recomendada**
+                    if melhores_oa:
+                        st.success(f"""
+                        **✓ Estratégia Equilibrada Recomendada**
+                        
+                        **Melhores opções (Open Access + Bom FI):**
+                        {chr(10).join([f"- {r}" for r in melhores_oa[:3]])}
+                        
+                        Priorize estas revistas! Elas equilibram FI (Proc. 1) e Altimetria (Proc. 2).
+                        """)
+                    else:
+                        st.warning("""
+                        **⚠️ Atenção: Sem Open Access**
+                        
+                        Para estratégia equilibrada, escolha a revista com melhor FI na tabela e **deposite preprint** em repositório aberto!
+                        """)
                     
-                    Priorize os cards 🟢 (Open Access + Alto Impacto). Eles oferecem o melhor equilíbrio entre FI (Proc. 1) e Altimetria (Proc. 2).
-                    """)
                 elif "Impacto Social" in foco:
                     if melhores_oa:
                         st.success(f"""
                         **📢 Foco em Impacto Social**
                         
-                        **Revistas Open Access (priorize):**
+                        **Priorize estas (Open Access):**
                         {chr(10).join([f"- {r}" for r in melhores_oa])}
                         
-                        **Ação:** Compartilhe ativamente nas redes após publicar!
+                        **Ação pós-publicação:**
+                        - Compartilhar no LinkedIn, Twitter, ResearchGate
+                        - Enviar para mailing da área
+                        - Divulgar ativamente
                         """)
                     else:
-                        st.warning("⚠️ Nenhuma Open Access. Deposite preprint em SciELO/arXiv!")
+                        st.error("""
+                        **⚠️ CRÍTICO: Nenhuma Open Access**
+                        
+                        Para máximo impacto social, você PRECISA:
+                        1. Depositar preprint no SciELO/arXiv/bioRxiv
+                        2. Compartilhar amplamente o link
+                        3. Usar redes sociais ativamente
+                        """)
+                    
                 else:
-                    st.success("""
+                    st.success(f"""
                     **📈 Foco Tradicional**
                     
-                    Priorize FI > 3.0 (Exatas/Saúde) ou > 1.0 (Humanas).
+                    **Priorize pela tabela (maior FI primeiro):**
+                    - Veja a coluna "Fator de Impacto"
+                    - Priorize: FI > 3.0 (Exatas/Saúde) ou > 1.0 (Humanas)
                     
-                    **Importante:** Deposite preprint se for fechada para compensar no Proc. 2!
+                    **Importante:** Mesmo sendo fechada, deposite preprint para não perder pontos no Proc. 2!
                     """)
                 
                 # Procedimentos
@@ -306,17 +392,19 @@ if submitted:
                 
                 with col1:
                     st.info("""
-                    **📊 Proc. 1 - Métricas**
+                    **📊 Proc. 1 - Métricas
                     
                     CAPES usa OpenAlex.
                     
-                    **Exatas/Saúde:**
-                    - Excelente: FI > 3.0
+                    **Referências:**
+                    
+                    Exatas/Saúde:
+                    - Excelente: > 3.0
                     - Bom: 1.5-3.0
                     - Aceitável: 0.5-1.5
                     
-                    **Humanas:**
-                    - Excelente: FI > 1.5
+                    Humanas:
+                    - Excelente: > 1.5
                     - Bom: 0.5-1.5
                     - Aceitável: 0.2-0.5
                     """)
@@ -328,23 +416,25 @@ if submitted:
                         
                         ✓ Tem Open Access!
                         
-                        **Benefícios:**
+                        **Vantagens:**
+                        - Artigo gratuito
                         - Mais downloads
                         - Mais compartilhamentos
-                        - Mais menções
+                        - Mais menções sociais
                         
-                        **Ação:** Divulgue!
+                        **Ação:** Divulgue ativamente!
                         """)
                     else:
                         st.warning("""
                         **📢 Proc. 2 - Altimetria
                         
-                        ⚠ Fechadas
+                        ⚠ Todas fechadas
                         
-                        **Solução:**
+                        **Solução OBRIGATÓRIA:**
                         1. Deposite preprint
                         2. Compartilhe link
                         3. Use redes sociais
+                        4. Envie para mailing
                         """)
                 
                 with col3:
@@ -353,21 +443,21 @@ if submitted:
                     
                     CAPES premia transparência!
                     
-                    **Ações:**
+                    **Ações que contam:**
                     - Dados no Zenodo/OSF
                     - Citar DOI dos dados
                     - Preprints
                     - Código aberto
                     
-                    💡 Dados abertos = 30% mais citações!
+                    💡 Dados abertos = +30% citações!
                     """)
                 
                 # Checklist
                 st.markdown('<div class="section-title">▸ Checklist</div>', unsafe_allow_html=True)
                 st.success("""
-                ** Antes:** [ ] ORCID vinculado | [ ] Dados organizados  
-                ** Durante:** [ ] Preprint | [ ] DOI no artigo  
-                **📢 Após:** [ ] Divulgar | [ ] Monitorar altimetria
+                **📋 Antes:** [ ] ORCID vinculado | [ ] Dados organizados  
+                **📤 Durante:** [ ] Preprint | [ ] DOI no artigo  
+                **📢 Após:** [ ] Divulgar nas redes | [ ] Monitorar altimetria
                 """)
                 
             else:
@@ -376,7 +466,7 @@ if submitted:
 # Footer
 st.markdown("""
 <div class="footer">
-    <p style="margin: 0 0 1rem 0;"><strong> Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0;"><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
     <p style="margin: 0 0 1rem 0;">
         OpenAlex + CAPES 2025-2028 | Sem vínculo oficial CAPES/MEC
     </p>
