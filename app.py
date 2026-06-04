@@ -1,7 +1,6 @@
 import streamlit as st
 import requests
 import urllib.parse
-import pandas as pd
 
 # ==============================================================================
 # CONFIGURAÇÃO
@@ -13,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS
+# CSS Premium
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -58,6 +57,16 @@ st.markdown("""
     .alert-success { background: #f0fff4; border-left: 4px solid #48bb78; }
     .alert-warning { background: #fffaf0; border-left: 4px solid #ed8936; }
     
+    .input-note {
+        font-size: 0.85rem;
+        color: #4a5568;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: rgba(255,255,255,0.8);
+        border-radius: 6px;
+        border-left: 3px solid #667eea;
+    }
+    
     .footer {
         margin-top: 3rem;
         padding: 2rem;
@@ -76,61 +85,206 @@ st.markdown("""
         font-weight: 600;
         width: 100%;
     }
+    
+    /* Tabela HTML com cores */
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .custom-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .custom-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .custom-table tr:hover {
+        background: #f7fafc;
+    }
+    
+    .badge-alt-high {
+        background: #c6f6d5;
+        color: #22543d;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .badge-alt-medium {
+        background: #bee3f8;
+        color: #2a4365;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .badge-alt-low {
+        background: #e2e8f0;
+        color: #718096;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .badge-oa-yes {
+        background: #c6f6d5;
+        color: #22543d;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        display: inline-block;
+    }
+    
+    .badge-oa-no {
+        background: #fed7d7;
+        color: #742a2a;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        display: inline-block;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # Header
 st.markdown('<p class="main-header">✦ Assistente de Estratégia de Publicação</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028 | Ciência Aberta e Dados Reais</p>', unsafe_allow_html=True)
 
 # ==============================================================================
 # SEÇÃO EDUCACIONAL
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Entenda a Avaliação CAPES</div>', unsafe_allow_html=True)
 
-with st.expander("📚 Clique para entender os 3 Procedimentos", expanded=False):
+with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", expanded=False):
     st.markdown("""
-    **📊 Procedimento 1:** Métricas do Periódico (Fator de Impacto)  
-    **📢 Procedimento 2:** Impacto Social (Altimetria)  
-    **✦ Procedimento 3:** Ciência Aberta e Qualitativo
+    ### 🔍 Como Funciona a Avaliação CAPES 2025-2028
     
-    ### Estratégias:
-    - **⚖️ Equilibrado:** Mais seguro
-    - **📢 Impacto Social:** Prioriza Open Access
-    - **📈 Tradicional:** Foca em alto FI
+    A CAPES avalia os programas de pós-graduação através de **3 procedimentos complementares**:
+    
+    #### **📊 Procedimento 1: Métricas do Periódico (Qualis)**
+    - **O que avalia:** A qualidade da REVISTA onde você publica
+    - **Como mede:** Fator de Impacto, Quartil (Q1-Q4), Citações
+    - **Base de dados:** OpenAlex (substituiu o JCR/Scopus pagos)
+    - **Referências:**
+      - Exatas/Saúde: Excelente >3.0 | Bom >1.5 | Aceitável >0.5
+      - Humanas: Excelente >1.5 | Bom >0.5 | Aceitável >0.2
+    
+    #### **📢 Procedimento 2: Impacto Social (Altimetria)**
+    - **O que avalia:** O impacto do SEU ARTIGO na sociedade
+    - **Como mede:** Downloads, menções em redes sociais, compartilhamentos, citações em políticas públicas
+    - **Dica crucial:** Artigos em Acesso Aberto têm MUITO mais alcance!
+    
+    #### **✦ Procedimento 3: Ciência Aberta e Qualitativo**
+    - **O que avalia:** Relevância e transparência da pesquisa
+    - **Como mede:** Análise por pares, disponibilização de dados, preprints
+    - **Dica de ouro:** Depositar dados no Zenodo/OSF conta MUITOS pontos!
+    
+    ---
+    
+    ### 🎯 Os 3 Tipos de Estratégia
+    
+    **⚖️ 1. Equilibrado:** Mais seguro e recomendado. Boa pontuação em todos os procedimentos.
+    
+    **📢 2. Impacto Social:** Prioriza Open Access e divulgação. Ideal para pesquisas com aplicação prática.
+    
+    **📈 3. Tradicional:** Foca em alto Fator de Impacto. Ideal para prestígio acadêmico máximo.
     """)
 
 # ==============================================================================
-# FORMULÁRIO
+# FORMULÁRIO COM NOTAS EXPLICATIVAS
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Dados da Produção Intelectual</div>', unsafe_allow_html=True)
+
+st.markdown("""
+<div class="alert-box alert-info">
+<strong>💡 Dica geral:</strong> Preencha os campos abaixo com informações da sua pesquisa. 
+Quanto mais detalhado, mais precisas serão as recomendações de revistas!
+</div>
+""", unsafe_allow_html=True)
 
 with st.form("dados_pesquisa", clear_on_submit=False):
     col1, col2 = st.columns(2)
     
     with col1:
-        titulo = st.text_input("📝 Título do Artigo ou Tema")
+        titulo = st.text_input(
+            "📝 Título do Artigo ou Tema da Pesquisa",
+            help="💡 O título ajuda a ferramenta a contextualizar a relevância temática da sua pesquisa. Isso é fundamental para o Procedimento 3 (Avaliação Qualitativa), onde os consultores da CAPES analisam a coerência e o avanço do conhecimento na área."
+        )
+        st.markdown("""
+        <div class="input-note">
+        <strong>📌 Por que isso importa?</strong> O título define o contexto temático. 
+        Seja específico! Exemplo: "Machine Learning para Diagnóstico Precoce de Diabetes Tipo 2" é melhor que apenas "Machine Learning".
+        </div>
+        """, unsafe_allow_html=True)
+        
         area_capes = st.selectbox(
-            "📚 Grande Área CAPES",
+            "📚 Grande Área de Avaliação CAPES",
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
              "Engenharias", "Ciências Sociais Aplicadas", "Ciências Biológicas", 
-             "Linguística, Letras e Artes", "Ciências Agrárias"]
+             "Linguística, Letras e Artes", "Ciências Agrárias"],
+            help="💡 Cada área possui um Documento de Área específico que pondera de forma diferente os Procedimentos 1, 2 e 3. Exatas/Saúde valorizam mais o FI alto. Humanas valorizam mais o Proc. 3 (Qualitativo)."
         )
+        st.markdown("""
+        <div class="input-note">
+        <strong>📌 Como isso afeta a avaliação?</strong> 
+        • <strong>Exatas/Saúde:</strong> FI > 3.0 é excelente<br>
+        • <strong>Humanas:</strong> FI > 1.5 já é excelente<br>
+        A ferramenta adaptará as recomendações conforme sua área.
+        </div>
+        """, unsafe_allow_html=True)
 
     with col2:
         resumo = st.text_area(
-            "🔑 Palavras-chave (EM INGLÊS)",
-            height=120,
-            placeholder="Ex: machine learning healthcare prediction"
+            " Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
+            height=140,
+            placeholder="Ex: machine learning diabetes prediction healthcare genomics",
+            help="💡 CRUCIAL: Use 3-8 palavras-chave em INGLÊS. A ferramenta busca na base global OpenAlex. Termos em inglês retornam MUITO mais revistas e métricas precisas. A OpenAlex é a base oficial que a CAPES usa no novo Qualis."
         )
+        st.markdown("""
+        <div class="input-note">
+        <strong>📌 Como escolher as palavras-chave?</strong><br>
+        • Use <strong>termos técnicos em inglês</strong> da sua área<br>
+        • Combine: <strong>método + aplicação + área</strong><br>
+        • Exemplos:<br>
+          - "machine learning healthcare prediction"<br>
+          - "CRISPR gene editing agriculture"<br>
+          - "renewable energy sustainability"<br>
+        • <strong>Não use:</strong> frases longas em português
+        </div>
+        """, unsafe_allow_html=True)
+        
         foco = st.selectbox(
-            "🎯 Estratégia",
+            "🎯 Estratégia de Publicação",
             ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
              "📢 Máximo Impacto Social (Altimetria)", 
-             "📈 Máximo Tradicional (Fator de Impacto)"]
+             "📈 Máximo Tradicional (Fator de Impacto)"],
+            help="💡 A escolha do foco depende dos seus objetivos de carreira e do seu programa. O Equilibrado é o mais seguro e recomendado pela CAPES. O Impacto Social prioriza Open Access. O Tradicional foca em prestígio acadêmico."
         )
+        st.markdown("""
+        <div class="input-note">
+        <strong>📌 Qual estratégia escolher?</strong><br>
+        • <strong>⚖️ Equilibrado:</strong> Mais seguro. Bom em todos os procedimentos. Recomendado para maioria.<br>
+        • <strong>📢 Impacto Social:</strong> Se sua pesquisa tem aplicação prática e você quer máximo alcance/divulgação.<br>
+        • <strong>📈 Tradicional:</strong> Se busca prestígio acadêmico máximo e quer competir por posições em universidades de elite.
+        </div>
+        """, unsafe_allow_html=True)
     
-    submitted = st.form_submit_button("🚀 Gerar Relatório", use_container_width=True)
+    submitted = st.form_submit_button("🚀 Gerar Relatório Completo com Tabela Comparativa", use_container_width=True)
 
 # ==============================================================================
 # FUNÇÕES
@@ -176,18 +330,46 @@ def buscar_revistas(query, max_results=6):
 # ==============================================================================
 if submitted:
     if not resumo.strip():
-        st.warning("⚠️ Insira palavras-chave em inglês.")
+        st.warning("⚠️ Insira pelo menos 3-5 palavras-chave em inglês para realizar a busca.")
     else:
-        with st.spinner("⟳ Buscando revistas..."):
+        with st.spinner("⟳ Consultando OpenAlex e gerando análise..."):
             query = " ".join(resumo.split()[:15])
             revistas = buscar_revistas(query, max_results=6)
             
             if revistas:
-                st.success("✓ Relatório gerado!")
+                st.success("✓ Relatório gerado com sucesso!")
                 
-                # Preparar dados para tabela
-                dados_tabela = []
+                # Tabela Comparativa com HTML (cores reais)
+                st.markdown('<div class="section-title">✦ Tabela Comparativa de Revistas</div>', unsafe_allow_html=True)
+                
+                st.markdown("""
+                <div class="alert-box alert-info">
+                <strong>📊 Como ler esta tabela:</strong><br>
+                • A tabela está <strong>ordenada por relevância</strong> (#1 é a mais relevante para sua busca)<br>
+                • <strong>🟢 Open Access + Alto Impacto:</strong> Melhor opção (verde) - equilibra FI e altimetria<br>
+                • <strong>🔵 Open Access:</strong> Boa para altimetria (azul) - maximize compartilhamentos<br>
+                • <strong>🔴 Fechado:</strong> Paywall, mas alto FI (vermelho) - deposite preprint para compensar<br>
+                • <strong>Fator de Impacto:</strong> Quanto maior, melhor. Exatas/Saúde: >3.0 excelente | Humanas: >1.5 excelente
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Construir tabela HTML
                 melhores_oa = []
+                html_tabela = '''
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>📊 Ranking</th>
+                            <th>Revista</th>
+                            <th>🚪 Acesso</th>
+                            <th>📈 Fator de Impacto</th>
+                            <th>Classificação</th>
+                            <th>💬 Citações</th>
+                            <th>📢 Altimetria</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                '''
                 
                 for i, rev in enumerate(revistas, 1):
                     nome = rev.get("display_name", "N/A")
@@ -199,24 +381,21 @@ if submitted:
                     if is_oa:
                         melhores_oa.append(nome)
                     
-                    # Determinar cores e ícones
-                    if is_oa and citacoes > 5000:
-                        acesso_icon = "🟢"
-                        acesso_text = "Open Access"
-                        altimetria = "🔥 Alto"
-                        altimetria_cor = "🟢"
-                    elif is_oa:
-                        acesso_icon = "🔵"
-                        acesso_text = "Open Access"
-                        altimetria = "● Médio"
-                        altimetria_cor = "🔵"
+                    # Badge de acesso
+                    if is_oa:
+                        acesso_badge = '<span class="badge-oa-yes">✓ Open Access</span>'
                     else:
-                        acesso_icon = "🔴"
-                        acesso_text = "Fechado"
-                        altimetria = "○ Baixo"
-                        altimetria_cor = "⚪"
+                        acesso_badge = '<span class="badge-oa-no"> Fechado</span>'
                     
-                    # Classificar FI
+                    # Badge de altimetria com COR
+                    if is_oa and citacoes > 5000:
+                        alt_badge = '<span class="badge-alt-high">🔥 Alto</span>'
+                    elif is_oa:
+                        alt_badge = '<span class="badge-alt-medium">● Médio</span>'
+                    else:
+                        alt_badge = '<span class="badge-alt-low">○ Baixo</span>'
+                    
+                    # Classificação FI
                     if fi > 10:
                         fi_class = "🔥 Excelente"
                     elif fi > 5:
@@ -224,47 +403,22 @@ if submitted:
                     elif fi > 2:
                         fi_class = "✅ Bom"
                     else:
-                        fi_class = "📌 Aceitável"
+                        fi_class = " Aceitável"
                     
-                    dados_tabela.append({
-                        "📊 Ranking": f"#{i}",
-                        "Revista": nome,
-                        "🚪 Acesso": f"{acesso_icon} {acesso_text}",
-                        "📈 Fator de Impacto": f"{fi:.2f}",
-                        "Classificação FI": fi_class,
-                        "💬 Citações": formatar_numero(citacoes),
-                        "📢 Altimetria": f"{altimetria_cor} {altimetria}"
-                    })
+                    html_tabela += f'''
+                        <tr>
+                            <td><strong>#{i}</strong></td>
+                            <td><strong>{nome}</strong></td>
+                            <td>{acesso_badge}</td>
+                            <td><strong>{fi:.2f}</strong></td>
+                            <td>{fi_class}</td>
+                            <td>{formatar_numero(citacoes)}</td>
+                            <td>{alt_badge}</td>
+                        </tr>
+                    '''
                 
-                # Tabela Comparativa
-                st.markdown('<div class="section-title">✦ Tabela Comparativa de Revistas (Ordenada)</div>', unsafe_allow_html=True)
-                
-                st.info("""
-                **Como ler a tabela:**
-                - 🟢 **Open Access + Alto Impacto** = Melhor opção (verde)
-                - 🔵 **Open Access** = Boa para altimetria (azul)
-                - 🔴 **Fechado** = Paywall, mas alto FI (vermelho)
-                - A tabela está ordenada por relevância
-                """)
-                
-                # Criar DataFrame e exibir
-                df = pd.DataFrame(dados_tabela)
-                
-                # Configurar display da tabela
-                st.dataframe(
-                    df,
-                    use_container_width=True,
-                    hide_index=True,
-                    column_config={
-                        "📊 Ranking": st.column_config.TextColumn("📊 Ranking"),
-                        "Revista": st.column_config.TextColumn("Revista", width="medium"),
-                        "🚪 Acesso": st.column_config.TextColumn("🚪 Acesso"),
-                        "📈 Fator de Impacto": st.column_config.NumberColumn("📈 Fator de Impacto"),
-                        "Classificação FI": st.column_config.TextColumn("Classificação"),
-                        "💬 Citações": st.column_config.TextColumn("💬 Citações"),
-                        "📢 Altimetria": st.column_config.TextColumn("📢 Altimetria")
-                    }
-                )
+                html_tabela += '</tbody></table>'
+                st.markdown(html_tabela, unsafe_allow_html=True)
                 
                 # Resumo Visual
                 st.markdown('<div class="section-title">▸ Resumo Visual</div>', unsafe_allow_html=True)
@@ -289,7 +443,7 @@ if submitted:
                         
                         Todas {len(revistas)} revistas são fechadas.
                         
-                        **Solução:** Deposite preprint!
+                        **Solução:** Deposite preprint em repositório aberto!
                         """)
                 
                 with col2:
@@ -312,7 +466,7 @@ if submitted:
                         """)
                     else:
                         st.info(f"""
-                        **📌 Impacto Moderado**
+                        ** Impacto Moderado**
                         
                         Maior FI: **{max_fi:.2f}**
                         
@@ -330,148 +484,236 @@ if submitted:
                     Estratégia: {foco}
                     """)
                 
-                # Análise Estratégica
-                st.markdown('<div class="section-title">▸ Análise Estratégica</div>', unsafe_allow_html=True)
-                st.info(f"**Área CAPES:** {area_capes} | **Estratégia:** {foco}")
+                # Análise Estratégica Detalhada
+                st.markdown('<div class="section-title">▸ Análise Estratégica Personalizada</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="alert-box alert-info"><strong>Área CAPES:</strong> {area_capes} | <strong>Estratégia Escolhida:</strong> {foco}</div>', unsafe_allow_html=True)
                 
                 if "Equilibrado" in foco:
-                    if melhores_oa:
-                        st.success(f"""
-                        **✓ Estratégia Equilibrada Recomendada**
-                        
-                        **Melhores opções (Open Access + Bom FI):**
-                        {chr(10).join([f"- {r}" for r in melhores_oa[:3]])}
-                        
-                        Priorize estas revistas! Elas equilibram FI (Proc. 1) e Altimetria (Proc. 2).
-                        """)
-                    else:
-                        st.warning("""
-                        **⚠️ Atenção: Sem Open Access**
-                        
-                        Para estratégia equilibrada, escolha a revista com melhor FI na tabela e **deposite preprint** em repositório aberto!
-                        """)
+                    st.markdown("""
+                    <div class="alert-box alert-success">
+                    <h4 style="margin-top: 0;">✓ Estratégia Equilibrada - A Mais Recomendada</h4>
+                    <p>Você escolheu a estratégia mais segura e alinhada com as diretrizes da CAPES 2025-2028.</p>
+                    <p><strong>O que isso significa na prática:</strong></p>
+                    <ul>
+                        <li>Você busca revistas com <strong>bom Fator de Impacto</strong> (Proc. 1)</li>
+                        <li>Prioriza <strong>Acesso Aberto</strong> quando possível (Proc. 2)</li>
+                        <li>Valoriza <strong>Ciência Aberta</strong> e transparência (Proc. 3)</li>
+                    </ul>
+                    <p><strong>Recomendação:</strong> Na tabela acima, priorize as revistas marcadas com <strong>✓ Open Access</strong> que tenham Fator de Impacto acima de 1.0. Elas oferecem o melhor equilíbrio entre os 3 procedimentos.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                     
                 elif "Impacto Social" in foco:
                     if melhores_oa:
-                        st.success(f"""
-                        **📢 Foco em Impacto Social**
-                        
-                        **Priorize estas (Open Access):**
-                        {chr(10).join([f"- {r}" for r in melhores_oa])}
-                        
-                        **Ação pós-publicação:**
-                        - Compartilhar no LinkedIn, Twitter, ResearchGate
-                        - Enviar para mailing da área
-                        - Divulgar ativamente
-                        """)
+                        st.markdown(f"""
+                        <div class="alert-box alert-success">
+                        <h4 style="margin-top: 0;"> Estratégia de Máximo Impacto Social</h4>
+                        <p>Você prioriza o <strong>Procedimento 2 (Altimetria)</strong> da CAPES.</p>
+                        <p><strong>Revistas Open Access encontradas (priorize estas):</strong></p>
+                        <ul>
+                        {"".join([f"<li><strong>{r}</strong></li>" for r in melhores_oa])}
+                        </ul>
+                        <p><strong>Ação OBRIGATÓRIA pós-publicação:</strong></p>
+                        <ul>
+                            <li>Compartilhe ativamente no LinkedIn, Twitter/X, ResearchGate</li>
+                            <li>Envie para mailing lists da área</li>
+                            <li>Escreva posts explicando a pesquisa em linguagem acessível</li>
+                        </ul>
+                        <p><strong>Por que isso importa?</strong> Cada compartilhamento, download e menção alimenta o score de Altimetria que a CAPES rastreia via Crossref e Dimensions!</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                     else:
-                        st.error("""
-                        **⚠️ CRÍTICO: Nenhuma Open Access**
-                        
-                        Para máximo impacto social, você PRECISA:
-                        1. Depositar preprint no SciELO/arXiv/bioRxiv
-                        2. Compartilhar amplamente o link
-                        3. Usar redes sociais ativamente
-                        """)
+                        st.markdown("""
+                        <div class="alert-box alert-warning">
+                        <h4 style="margin-top: 0;">⚠ Atenção: Nenhuma Open Access Encontrada</h4>
+                        <p>Para estratégia de máximo impacto social, você PRECISA de acesso aberto.</p>
+                        <p><strong>Solução OBRIGATÓRIA:</strong></p>
+                        <ol>
+                            <li><strong>Deposite o preprint</strong> em repositório aberto ANTES ou durante a submissão:
+                                <ul>
+                                    <li>SciELO Preprints (multidisciplinar)</li>
+                                    <li>arXiv (Exatas, Computação)</li>
+                                    <li>bioRxiv/medRxiv (Ciências da Vida)</li>
+                                    <li>SSRN (Ciências Sociais)</li>
+                                </ul>
+                            </li>
+                            <li><strong>Compartilhe o link do preprint</strong> nas redes sociais</li>
+                            <li><strong>Após publicação</strong>, atualize o preprint com o link da versão final</li>
+                        </ol>
+                        <p><strong>Resultado:</strong> O Crossref rastreará as menções ao preprint aberto e você ganhará altimetria mesmo publicando em revista fechada!</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                     
                 else:
-                    st.success(f"""
-                    **📈 Foco Tradicional**
-                    
-                    **Priorize pela tabela (maior FI primeiro):**
-                    - Veja a coluna "Fator de Impacto"
-                    - Priorize: FI > 3.0 (Exatas/Saúde) ou > 1.0 (Humanas)
-                    
-                    **Importante:** Mesmo sendo fechada, deposite preprint para não perder pontos no Proc. 2!
-                    """)
+                    st.markdown("""
+                    <div class="alert-box alert-success">
+                    <h4 style="margin-top: 0;">📈 Estratégia de Máximo Impacto Tradicional</h4>
+                    <p>Você prioriza o <strong>Procedimento 1 (Fator de Impacto)</strong> da CAPES.</p>
+                    <p><strong>O que isso significa:</strong></p>
+                    <ul>
+                        <li>Foco em revistas de <strong>alto prestígio</strong> e FI elevado</li>
+                        <li>Busca maximizar pontuação no Qualis/CAPES tradicional</li>
+                        <li>Ideal para carreiras acadêmicas de elite</li>
+                    </ul>
+                    <p><strong>Recomendação:</strong> Na tabela acima, priorize revistas com FI acima de 3.0 (Exatas/Saúde) ou 1.0 (Humanas).</p>
+                    <p><strong>Compensação necessária:</strong> Revistas de alto impacto geralmente são fechadas (✕). Para não perder pontos no Proc. 2 (Altimetria), você DEVE:</p>
+                    <ol>
+                        <li>Depositar o <strong>preprint</strong> no arXiv, bioRxiv ou SciELO Preprints</li>
+                        <li>Compartilhar o link do preprint nas redes sociais</li>
+                        <li>Divulgar ativamente mesmo com paywall</li>
+                    </ol>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
-                # Procedimentos
-                st.markdown('<div class="section-title">▸ Guia dos Procedimentos</div>', unsafe_allow_html=True)
+                # Procedimentos Detalhados
+                st.markdown('<div class="section-title">▸ Guia Detalhado dos 3 Procedimentos CAPES</div>', unsafe_allow_html=True)
                 
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    st.info("""
-                    **📊 Proc. 1 - Métricas
-                    
-                    CAPES usa OpenAlex.
-                    
-                    **Referências:**
-                    
-                    Exatas/Saúde:
-                    - Excelente: > 3.0
-                    - Bom: 1.5-3.0
-                    - Aceitável: 0.5-1.5
-                    
-                    Humanas:
-                    - Excelente: > 1.5
-                    - Bom: 0.5-1.5
-                    - Aceitável: 0.2-0.5
-                    """)
+                    st.markdown("""
+                    <div class="alert-box alert-info">
+                    <h4 style="margin-top: 0;">📊 Procedimento 1</h4>
+                    <p><strong>Métricas do Periódico</strong></p>
+                    <p><strong>O que a CAPES avalia:</strong> A qualidade da revista onde você publica, usando a OpenAlex como base oficial (substituindo o JCR/Scopus pagos).</p>
+                    <p><strong>Referências por Área:</strong></p>
+                    <p><strong>Exatas e Saúde:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li>Excelente: FI > 3.0</li>
+                        <li>Bom: FI entre 1.5 e 3.0</li>
+                        <li>Aceitável: FI entre 0.5 e 1.5</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>Humanas:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li>Excelente: FI > 1.5</li>
+                        <li>Bom: FI entre 0.5 e 1.5</li>
+                        <li>Aceitável: FI entre 0.2 e 0.5</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>Dica:</strong> Além do FI, a CAPES considera o Quartil (Q1, Q2, Q3, Q4). Q1 e Q2 têm maior pontuação.</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
                 with col2:
                     if melhores_oa:
-                        st.success("""
-                        **📢 Proc. 2 - Altimetria
-                        
-                        ✓ Tem Open Access!
-                        
-                        **Vantagens:**
-                        - Artigo gratuito
-                        - Mais downloads
-                        - Mais compartilhamentos
-                        - Mais menções sociais
-                        
-                        **Ação:** Divulgue ativamente!
-                        """)
+                        st.markdown("""
+                        <div class="alert-box alert-success">
+                        <h4 style="margin-top: 0;">📢 Procedimento 2</h4>
+                        <p><strong>Impacto Social (Altimetria)</strong></p>
+                        <p style="color: #22543d;"><strong>✓ Vantagem:</strong> Você tem revistas Open Access na tabela!</p>
+                        <p><strong>O que a CAPES avalia:</strong> O impacto do SEU ARTIGO na sociedade, medido por downloads, menções em redes sociais, compartilhamentos e citações em políticas públicas.</p>
+                        <p><strong>Benefícios do Open Access:</strong></p>
+                        <ul style="padding-left: 1rem; margin: 0;">
+                            <li>Artigo gratuito para todos</li>
+                            <li>Mais downloads e visualizações</li>
+                            <li>Mais compartilhamentos no Twitter, LinkedIn</li>
+                            <li>Mais salvamentos no Mendeley, Zotero</li>
+                            <li>Possibilidade de ser citado em políticas públicas</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;"><strong>Ação necessária:</strong> Após a publicação, compartilhe ativamente o link do artigo em suas redes profissionais. Isso alimenta diretamente o score de Altimetria!</p>
+                        </div>
+                        """, unsafe_allow_html=True)
                     else:
-                        st.warning("""
-                        **📢 Proc. 2 - Altimetria
-                        
-                        ⚠ Todas fechadas
-                        
-                        **Solução OBRIGATÓRIA:**
-                        1. Deposite preprint
-                        2. Compartilhe link
-                        3. Use redes sociais
-                        4. Envie para mailing
-                        """)
+                        st.markdown("""
+                        <div class="alert-box alert-warning">
+                        <h4 style="margin-top: 0;">📢 Procedimento 2</h4>
+                        <p><strong>Impacto Social (Altimetria)</strong></p>
+                        <p style="color: #742a2a;"><strong>⚠ Atenção:</strong> Todas as revistas sugeridas possuem paywall (acesso restrito).</p>
+                        <p><strong>Problema:</strong></p>
+                        <ul style="padding-left: 1rem; margin: 0;">
+                            <li>Poucas pessoas conseguirão ler seu artigo</li>
+                            <li>Menos downloads = menos compartilhamentos = menos altimetria</li>
+                            <li>Risco de baixa pontuação no Proc. 2</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;"><strong>Solução OBRIGATÓRIA:</strong></p>
+                        <ol style="padding-left: 1rem; margin: 0;">
+                            <li>Deposite o preprint em repositório aberto</li>
+                            <li>Compartilhe o link do preprint</li>
+                            <li>Use redes sociais ativamente</li>
+                        </ol>
+                        </div>
+                        """, unsafe_allow_html=True)
                 
                 with col3:
-                    st.info("""
-                    **✦ Proc. 3 - Ciência Aberta
-                    
-                    CAPES premia transparência!
-                    
-                    **Ações que contam:**
-                    - Dados no Zenodo/OSF
-                    - Citar DOI dos dados
-                    - Preprints
-                    - Código aberto
-                    
-                    💡 Dados abertos = +30% citações!
-                    """)
+                    st.markdown("""
+                    <div class="alert-box alert-info">
+                    <h4 style="margin-top: 0;">✦ Procedimento 3</h4>
+                    <p><strong>Ciência Aberta e Qualitativo</strong></p>
+                    <p><strong>O que a CAPES avalia:</strong> A relevância e transparência da pesquisa, analisada por pares consultores.</p>
+                    <p><strong>Ações que contam MUITOS pontos:</strong></p>
+                    <ul style="padding-left: 1rem; margin: 0;">
+                        <li><strong>Disponibilizar dados brutos</strong> em repositórios abertos:
+                            <ul>
+                                <li><a href="https://zenodo.org" target="_blank">Zenodo</a> (gratuito, gera DOI)</li>
+                                <li><a href="https://osf.io" target="_blank">OSF</a> (gratuito)</li>
+                            </ul>
+                        </li>
+                        <li><strong>Citar o DOI dos dados</strong> no artigo publicado</li>
+                        <li><strong>Publicar preprints</strong> (versões prévias)</li>
+                        <li><strong>Usar software livre</strong> e abrir códigos (GitHub)</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem;"><strong>💡 Dica de ouro:</strong> Pesquisadores que disponibilizam dados abertos têm até <strong>30% mais citações</strong> em média!</p>
+                    </div>
+                    """, unsafe_allow_html=True)
                 
-                # Checklist
-                st.markdown('<div class="section-title">▸ Checklist</div>', unsafe_allow_html=True)
-                st.success("""
-                **📋 Antes:** [ ] ORCID vinculado | [ ] Dados organizados  
-                **📤 Durante:** [ ] Preprint | [ ] DOI no artigo  
-                **📢 Após:** [ ] Divulgar nas redes | [ ] Monitorar altimetria
-                """)
+                # Checklist Detalhado
+                st.markdown('<div class="section-title">▸ Checklist de Ação Passo a Passo</div>', unsafe_allow_html=True)
+                st.markdown("""
+                <div class="alert-box alert-success">
+                <h4 style="margin-top: 0;">📋 Antes da Submissão</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Vincular ORCID ao Lattes</strong> - A CAPES cruza dados via ORCID para validar autoria e impacto. É obrigatório!</li>
+                    <li><strong>Preparar dados para repositório</strong> - Organize dados brutos, códigos e metadados. Anonimize dados sensíveis se houver.</li>
+                    <li><strong>Escolher repositório</strong> - Zenodo (recomendado para iniciantes) ou OSF.</li>
+                </ul>
+                
+                <h4 style="margin: 1rem 0 0.5rem 0;">📤 Durante a Submissão</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Depositar preprint</strong> (se a revista permitir) - SciELO Preprints, arXiv, bioRxiv conforme sua área.</li>
+                    <li><strong>Subir dados no Zenodo/OSF</strong> - Obtenha o DOI dos dados.</li>
+                    <li><strong>Incluir no manuscrito</strong> - Cite o DOI dos dados: "Data available at: [DOI]"</li>
+                </ul>
+                
+                <h4 style="margin: 1rem 0 0.5rem 0;">📢 Após a Publicação (CRUCIAL!)</h4>
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    <li><strong>Atualizar preprint</strong> com link da versão publicada</li>
+                    <li><strong>Divulgar nas redes sociais</strong>:
+                        <ul>
+                            <li>LinkedIn: Post profissional explicando a relevância</li>
+                            <li>Twitter/X: Thread resumindo os principais achados</li>
+                            <li>ResearchGate: Upload da versão autor (se permitido)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Enviar para mailing</strong> da área e grupos de pesquisa</li>
+                    <li><strong>Compartilhar com assessoria de comunicação</strong> da universidade</li>
+                    <li><strong>Monitorar altimetria</strong> em <a href="https://www.altmetric.com" target="_blank">altmetric.com</a></li>
+                </ul>
+                </div>
+                """, unsafe_allow_html=True)
                 
             else:
-                st.warning("⚠️ Nenhuma revista encontrada. Tente termos em inglês mais genéricos.")
+                st.markdown("""
+                <div class="alert-box alert-warning">
+                <h4 style="margin-top: 0;">⚠️ Nenhuma revista encontrada</h4>
+                <p><strong>Dicas para melhorar a busca:</strong></p>
+                <ul>
+                    <li>Use <strong>palavras-chave em inglês</strong> (a OpenAlex é uma base global)</li>
+                    <li>Use <strong>termos mais genéricos</strong> (ex: "machine learning" em vez de "deep learning neural network transformer")</li>
+                    <li>Use <strong>3-8 palavras-chave</strong> separadas por espaço</li>
+                    <li>Verifique a <strong>ortografia</strong> dos termos</li>
+                </ul>
+                </div>
+                """, unsafe_allow_html=True)
 
 # Footer
 st.markdown("""
 <div class="footer">
-    <p style="margin: 0 0 1rem 0;"><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
-    <p style="margin: 0 0 1rem 0;">
-        OpenAlex + CAPES 2025-2028 | Sem vínculo oficial CAPES/MEC
+    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong> Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0; line-height: 1.6;">
+        Desenvolvida com bases de dados abertas (OpenAlex) e alinhada às Diretrizes Comuns da CAPES (Ciclo 2025-2028).<br>
+        Esta ferramenta não possui vinculação oficial com a CAPES ou MEC.
     </p>
     <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
-        <em>Promovendo Ciência Aberta</em>
+        <em>Iniciativa de promoção da Ciência Aberta e Transparência na Pós-Graduação Brasileira</em>
     </p>
 </div>
 """, unsafe_allow_html=True)
