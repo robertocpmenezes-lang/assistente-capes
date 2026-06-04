@@ -3,6 +3,7 @@ import requests
 import urllib.parse
 import pandas as pd
 from datetime import datetime
+from fpdf import FPDF
 
 # ==============================================================================
 # CONFIGURAÇÃO
@@ -13,6 +14,113 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# Inicializar estado para idioma
+if 'idioma' not in st.session_state:
+    st.session_state.idioma = 'pt'
+
+# Dicionário de traduções
+TRADUCOES = {
+    'pt': {
+        'titulo': 'Assistente de Estratégia de Publicação',
+        'subtitulo': 'Ciclo de Avaliação CAPES 2025-2028 | Ciência Aberta e Dados Reais',
+        'entenda': 'Entenda a Avaliação CAPES',
+        'expander': '📚 Clique para entender os 3 Procedimentos e Estratégias',
+        'dados': 'Dados da Produção Intelectual',
+        'dica_geral': '💡 Dica geral: Preencha os campos destacados abaixo com informações da sua pesquisa. Quanto mais detalhado, mais precisas serão as recomendações de revistas!',
+        'titulo_input': '📝 Título do Artigo ou Tema da Pesquisa',
+        'area_input': '📚 Grande Área de Avaliação CAPES',
+        'palavras_input': '🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)',
+        'estrategia_input': '🎯 Estratégia de Publicação',
+        'gerar': '🚀 Gerar Relatório Completo',
+        'tabela': 'Tabela Comparativa',
+        'como_ler': '**Como ler:** Tabela ordenada por relevância | 🟢 OA+Alto = melhor | 🔵 OA = boa altimetria | 🔴 Fechado',
+        'legenda': 'Legenda',
+        'resumo': 'Resumo Visual',
+        'analise': 'Análise',
+        'guia': 'Guia Detalhado dos 3 Procedimentos CAPES',
+        'checklist': 'Checklist de Ação Passo a Passo',
+        'download': 'Download do Relatório',
+        'footer': 'Ferramenta de Apoio à Pesquisa',
+        'footer_texto': 'Desenvolvida com bases de dados abertas (OpenAlex) e alinhada às Diretrizes Comuns da CAPES (Ciclo 2025-2028).<br>Esta ferramenta não possui vinculação oficial com a CAPES ou MEC.',
+        'footer_final': 'Iniciativa de promoção da Ciência Aberta e Transparência na Pós-Graduação Brasileira',
+    },
+    'en': {
+        'titulo': 'Publication Strategy Assistant',
+        'subtitulo': 'CAPES Evaluation Cycle 2025-2028 | Open Science and Real Data',
+        'entenda': 'Understand CAPES Evaluation',
+        'expander': '📚 Click to understand the 3 Procedures and Strategies',
+        'dados': 'Intellectual Production Data',
+        'dica_geral': '💡 General tip: Fill in the highlighted fields below with information about your research. The more detailed, the more accurate the journal recommendations will be!',
+        'titulo_input': '📝 Article Title or Research Topic',
+        'area_input': '📚 CAPES Evaluation Area',
+        'palavras_input': '🔑 Keywords (PREFERABLY IN ENGLISH)',
+        'estrategia_input': '🎯 Publication Strategy',
+        'gerar': '🚀 Generate Complete Report',
+        'tabela': 'Comparative Table',
+        'como_ler': '**How to read:** Table sorted by relevance | 🟢 OA+High = best | 🔵 OA = good altimetry | 🔴 Closed',
+        'legenda': 'Legend',
+        'resumo': 'Visual Summary',
+        'analise': 'Analysis',
+        'guia': 'Detailed Guide to the 3 CAPES Procedures',
+        'checklist': 'Step-by-Step Action Checklist',
+        'download': 'Report Download',
+        'footer': 'Research Support Tool',
+        'footer_texto': 'Developed with open databases (OpenAlex) and aligned with CAPES Common Guidelines (Cycle 2025-2028).<br>This tool has no official connection with CAPES or MEC.',
+        'footer_final': 'Initiative to promote Open Science and Transparency in Brazilian Graduate Studies',
+    },
+    'es': {
+        'titulo': 'Asistente de Estrategia de Publicación',
+        'subtitulo': 'Ciclo de Evaluación CAPES 2025-2028 | Ciencia Abierta y Datos Reales',
+        'entenda': 'Entienda la Evaluación CAPES',
+        'expander': '📚 Haga clic para entender los 3 Procedimientos y Estrategias',
+        'dados': 'Datos de Producción Intelectual',
+        'dica_geral': '💡 Consejo general: Complete los campos resaltados a continuación con información sobre su investigación. ¡Cuanto más detallado, más precisas serán las recomendaciones de revistas!',
+        'titulo_input': '📝 Título del Artículo o Tema de Investigación',
+        'area_input': '📚 Área de Evaluación CAPES',
+        'palavras_input': '🔑 Palabras clave (PREFERENTEMENTE EN INGLÉS)',
+        'estrategia_input': '🎯 Estrategia de Publicación',
+        'gerar': '🚀 Generar Informe Completo',
+        'tabela': 'Tabla Comparativa',
+        'como_ler': '**Cómo leer:** Tabla ordenada por relevancia | 🟢 OA+Alto = mejor | 🔵 OA = buena altimetría | 🔴 Cerrado',
+        'legenda': 'Leyenda',
+        'resumo': 'Resumen Visual',
+        'analise': 'Análisis',
+        'guia': 'Guía Detallada de los 3 Procedimientos CAPES',
+        'checklist': 'Lista de Verificación Paso a Paso',
+        'download': 'Descarga del Informe',
+        'footer': 'Herramienta de Apoyo a la Investigación',
+        'footer_texto': 'Desarrollado con bases de datos abiertas (OpenAlex) y alineado con las Directrices Comunes de CAPES (Ciclo 2025-2028).<br>Esta herramienta no tiene vínculo oficial con CAPES o MEC.',
+        'footer_final': 'Iniciativa para promover la Ciencia Abierta y la Transparencia en los Estudios de Posgrado Brasileños',
+    },
+    'fr': {
+        'titulo': 'Assistant de Stratégie de Publication',
+        'subtitulo': 'Cycle d\'Évaluation CAPES 2025-2028 | Science Ouverte et Données Réelles',
+        'entenda': 'Comprendre l\'Évaluation CAPES',
+        'expander': '📚 Cliquez pour comprendre les 3 Procédures et Stratégies',
+        'dados': 'Données de Production Intellectuelle',
+        'dica_geral': '💡 Conseil général: Remplissez les champs surlignés ci-dessous avec les informations de votre recherche. Plus c\'est détaillé, plus les recommandations de revues seront précises!',
+        'titulo_input': '📝 Titre de l\'Article ou Thème de Recherche',
+        'area_input': '📚 Domaine d\'Évaluation CAPES',
+        'palavras_input': '🔑 Mots-clés (DE PRÉFÉRENCE EN ANGLAIS)',
+        'estrategia_input': '🎯 Stratégie de Publication',
+        'gerar': '🚀 Générer le Rapport Complet',
+        'tabela': 'Tableau Comparatif',
+        'como_ler': '**Comment lire:** Tableau trié par pertinence | 🟢 OA+Haut = meilleur | 🔵 OA = bonne altmétrie | 🔴 Fermé',
+        'legenda': 'Légende',
+        'resumo': 'Résumé Visuel',
+        'analise': 'Analyse',
+        'guia': 'Guide Détaillé des 3 Procédures CAPES',
+        'checklist': 'Liste de Vérification Étape par Étape',
+        'download': 'Téléchargement du Rapport',
+        'footer': 'Outil de Soutien à la Recherche',
+        'footer_texto': 'Développé avec des bases de données ouvertes (OpenAlex) et aligné sur les Directives Communes CAPES (Cycle 2025-2028).<br>Cet outil n\'a aucun lien officiel avec CAPES ou MEC.',
+        'footer_final': 'Initiative pour promouvoir la Science Ouverte et la Transparence dans les Études Supérieures Brésiliennes',
+    }
+}
+
+def get_texto(key):
+    return TRADUCOES.get(st.session_state.idioma, TRADUCOES['pt']).get(key, key)
 
 # CSS Premium
 st.markdown("""
@@ -100,19 +208,48 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3) !important;
         background-color: #f7fafc !important;
     }
+    
+    /* Seletor de idioma */
+    .language-selector {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
 </style>
 """, unsafe_allow_html=True)
 
+# Seletor de Idioma
+col_lang1, col_lang2, col_lang3, col_lang4 = st.columns([1, 1, 1, 1])
+with col_lang1:
+    if st.button("🇧🇷 Português", use_container_width=True):
+        st.session_state.idioma = 'pt'
+        st.rerun()
+with col_lang2:
+    if st.button("🇬🇧 English", use_container_width=True):
+        st.session_state.idioma = 'en'
+        st.rerun()
+with col_lang3:
+    if st.button("🇪🇸 Español", use_container_width=True):
+        st.session_state.idioma = 'es'
+        st.rerun()
+with col_lang4:
+    if st.button("🇫🇷 Français", use_container_width=True):
+        st.session_state.idioma = 'fr'
+        st.rerun()
+
+st.markdown('<div style="height: 80px;"></div>', unsafe_allow_html=True)
+
 # Header
-st.markdown('<p class="main-header">Assistente de Estratégia de Publicação</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028 | Ciência Aberta e Dados Reais</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="main-header">{get_texto("titulo")}</p>', unsafe_allow_html=True)
+st.markdown(f'<p class="sub-header">{get_texto("subtitulo")}</p>', unsafe_allow_html=True)
 
 # ==============================================================================
 # SEÇÃO EDUCACIONAL
 # ==============================================================================
-st.markdown('<div class="section-title">Entenda a Avaliação CAPES</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="section-title">{get_texto("entenda")}</div>', unsafe_allow_html=True)
 
-with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", expanded=False):
+with st.expander(get_texto("expander"), expanded=False):
     st.markdown("""
     ### 🔍 Como Funciona a Avaliação CAPES 2025-2028
     
@@ -150,12 +287,11 @@ with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", 
 # ==============================================================================
 # FORMULÁRIO COM EXPLICAÇÕES DETALHADAS
 # ==============================================================================
-st.markdown('<div class="section-title">Dados da Produção Intelectual</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="section-title">{get_texto("dados")}</div>', unsafe_allow_html=True)
 
-st.markdown("""
+st.markdown(f"""
 <div class="alert-box alert-info">
-<strong>💡 Dica geral:</strong> Preencha os campos destacados abaixo com informações da sua pesquisa. 
-Quanto mais detalhado, mais precisas serão as recomendações de revistas!
+<strong>{get_texto("dica_geral")}</strong>
 </div>
 """, unsafe_allow_html=True)
 
@@ -164,7 +300,7 @@ with st.form("dados_pesquisa", clear_on_submit=False):
     
     with col1:
         titulo = st.text_input(
-            "📝 Título do Artigo ou Tema da Pesquisa",
+            get_texto("titulo_input"),
             help="""
             💡 **Por que isso importa para a CAPES?**
             
@@ -190,7 +326,7 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         """, unsafe_allow_html=True)
         
         area_capes = st.selectbox(
-            "📚 Grande Área de Avaliação CAPES",
+            get_texto("area_input"),
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
              "Engenharias", "Ciências Sociais Aplicadas", "Ciências Biológicas", 
              "Linguística, Letras e Artes", "Ciências Agrárias"],
@@ -224,7 +360,7 @@ with st.form("dados_pesquisa", clear_on_submit=False):
 
     with col2:
         resumo = st.text_area(
-            "🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
+            get_texto("palavras_input"),
             height=140,
             placeholder="Ex: machine learning diabetes prediction healthcare genomics",
             help="""
@@ -262,7 +398,7 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         """, unsafe_allow_html=True)
         
         foco = st.selectbox(
-            "🎯 Estratégia de Publicação",
+            get_texto("estrategia_input"),
             ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
              "📢 Máximo Impacto Social (Altimetria)", 
              "📈 Máximo Tradicional (Fator de Impacto)"],
@@ -299,7 +435,7 @@ with st.form("dados_pesquisa", clear_on_submit=False):
         </div>
         """, unsafe_allow_html=True)
     
-    submitted = st.form_submit_button("🚀 Gerar Relatório Completo", use_container_width=True)
+    submitted = st.form_submit_button(get_texto("gerar"), use_container_width=True)
 
 # ==============================================================================
 # FUNÇÕES
@@ -340,6 +476,18 @@ def buscar_revistas(query, max_results=6):
     except:
         return []
 
+# Classe PDF
+class PDFRelatorio(FPDF):
+    def header(self):
+        self.set_font('Arial', 'B', 15)
+        self.cell(0, 10, 'Relatorio Estrategico CAPES 2025-2028', 0, 1, 'C')
+        self.ln(5)
+    
+    def footer(self):
+        self.set_y(-15)
+        self.set_font('Arial', 'I', 8)
+        self.cell(0, 10, f'Pagina {self.page_no()}', 0, 0, 'C')
+
 # ==============================================================================
 # EXECUÇÃO
 # ==============================================================================
@@ -355,11 +503,9 @@ if submitted:
                 st.success("✓ Relatório gerado!")
                 
                 # Tabela Comparativa
-                st.markdown('<div class="section-title">Tabela Comparativa</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("tabela")}</div>', unsafe_allow_html=True)
                 
-                st.info("""
-                **Como ler:** Tabela ordenada por relevância | 🟢 OA+Alto = melhor | 🔵 OA = boa altimetria | 🔴 Fechado
-                """)
+                st.info(get_texto("como_ler"))
                 
                 # Preparar dados
                 dados = []
@@ -431,7 +577,7 @@ if submitted:
                 """, unsafe_allow_html=True)
                 
                 # Resumo Visual
-                st.markdown('<div class="section-title">Resumo Visual</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("resumo")}</div>', unsafe_allow_html=True)
                 
                 col1, col2, col3 = st.columns(3)
                 
@@ -449,7 +595,7 @@ if submitted:
                     st.info(f"**📊 Total: {len(revistas)}**\n\nÁrea: {area_capes}")
                 
                 # Análise
-                st.markdown('<div class="section-title">Análise</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("analise")}</div>', unsafe_allow_html=True)
                 
                 if "Equilibrado" in foco:
                     if melhores_oa:
@@ -469,7 +615,7 @@ if submitted:
                 # ==============================================================================
                 # GUIA DETALHADO DOS 3 PROCEDIMENTOS CAPES
                 # ==============================================================================
-                st.markdown('<div class="section-title">Guia Detalhado dos 3 Procedimentos CAPES</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("guia")}</div>', unsafe_allow_html=True)
                 
                 col1, col2, col3 = st.columns(3)
                 
@@ -561,7 +707,7 @@ if submitted:
                 # ==============================================================================
                 # CHECKLIST DETALHADO
                 # ==============================================================================
-                st.markdown('<div class="section-title">Checklist de Ação Passo a Passo</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("checklist")}</div>', unsafe_allow_html=True)
                 st.markdown("""
                 <div class="alert-box alert-success">
                 <h4 style="margin-top: 0;">📋 Antes da Submissão</h4>
@@ -596,23 +742,23 @@ if submitted:
                 """, unsafe_allow_html=True)
                 
                 # ==============================================================================
-                # BOTÃO DE DOWNLOAD
+                # BOTÕES DE DOWNLOAD (PDF E TXT)
                 # ==============================================================================
-                st.markdown('<div class="section-title">Download do Relatório</div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-title">{get_texto("download")}</div>', unsafe_allow_html=True)
                 
                 # Preparar conteúdo do relatório
                 max_fi_valor = max([rev.get("summary_stats", {}).get("2yr_mean_citedness", 0) or 0 for rev in revistas])
                 
                 relatorio_texto = f"""
-RELATÓRIO ESTRATÉGICO DE PUBLICAÇÃO CAPES 2025-2028
+RELATORIO ESTRATEGICO DE PUBLICACAO CAPES 2025-2028
 ====================================================
 
 Pesquisa: {titulo}
-Área CAPES: {area_capes}
-Estratégia Escolhida: {foco}
+Area CAPES: {area_capes}
+Estrategia Escolhida: {foco}
 
 ================================================================================
-REVISTAS SUGERIDAS (Ordenadas por Relevância)
+REVISTAS SUGERIDAS (Ordenadas por Relevancia)
 ================================================================================
 
 """
@@ -622,8 +768,8 @@ REVISTAS SUGERIDAS (Ordenadas por Relevância)
 {row['📊 Ranking']} - {row['Revista']}
    Acesso: {row['🚪 Acesso']}
    Fator de Impacto: {row['📈 FI']}
-   Classificação: {row['Class']}
-   Citações: {row['💬 Citações']}
+   Classificacao: {row['Class']}
+   Citacoes: {row['💬 Citacoes']}
    Altimetria: {row['📢 Altimetria']}
 
 """
@@ -645,10 +791,10 @@ Maior Fator de Impacto: {max_fi_valor:.2f}
                 
                 relatorio_texto += f"""
 ================================================================================
-ANÁLISE ESTRATÉGICA
+ANALISE ESTRATEGICA
 ================================================================================
 
-Estratégia: {foco}
+Estrategia: {foco}
 
 """
                 
@@ -659,7 +805,7 @@ Estratégia: {foco}
                         relatorio_texto += "⚠️ Sem Open Access. Deposite preprint!\n"
                 elif "Impacto" in foco:
                     if melhores_oa:
-                        relatorio_texto += f"📢 Impacto Social\nPriorize: {', '.join(melhores_oa)}\nAção: Compartilhe ativamente nas redes!\n"
+                        relatorio_texto += f"📢 Impacto Social\nPriorize: {', '.join(melhores_oa)}\nAcao: Compartilhe ativamente nas redes!\n"
                     else:
                         relatorio_texto += "⚠️ Deposite preprint no SciELO/arXiv!\n"
                 else:
@@ -670,88 +816,88 @@ Estratégia: {foco}
 GUIA DOS PROCEDIMENTOS CAPES
 ================================================================================
 
-📊 PROCEDIMENTO 1 - Métricas do Periódico
-O que avalia: Qualidade da revista (FI, Quartil, Citações)
+📊 PROCEDIMENTO 1 - Metricas do Periodico
+O que avalia: Qualidade da revista (FI, Quartil, Citacoes)
 Base: OpenAlex (oficial CAPES)
 
-Referências Exatas/Saúde:
+Referencias Exatas/Saude:
   - Excelente: FI > 3.0
   - Bom: FI 1.5-3.0
-  - Aceitável: FI 0.5-1.5
+  - Aceitavel: FI 0.5-1.5
 
-Referências Humanas:
+Referencias Humanas:
   - Excelente: FI > 1.5
   - Bom: FI 0.5-1.5
-  - Aceitável: FI 0.2-0.5
+  - Aceitavel: FI 0.2-0.5
 
 📢 PROCEDIMENTO 2 - Impacto Social (Altimetria)
 O que avalia: Impacto do artigo na sociedade
-Mede: Downloads, menções, compartilhamentos
+Mede: Downloads, mencoes, compartilhamentos
 
 """
                 
                 if melhores_oa:
                     relatorio_texto += "✓ Vantagem: Tem Open Access!\n"
-                    relatorio_texto += "Ação: Divulgue ativamente nas redes!\n"
+                    relatorio_texto += "Acao: Divulgue ativamente nas redes!\n"
                 else:
-                    relatorio_texto += "⚠ Atenção: Revistas fechadas\n"
-                    relatorio_texto += "Solução: Deposite preprint!\n"
+                    relatorio_texto += "⚠ Atencao: Revistas fechadas\n"
+                    relatorio_texto += "Solucao: Deposite preprint!\n"
                 
                 relatorio_texto += """
-✦ PROCEDIMENTO 3 - Ciência Aberta
-O que avalia: Relevância e transparência
-Ações importantes:
+✦ PROCEDIMENTO 3 - Ciencia Aberta
+O que avalia: Relevancia e transparencia
+Acoes importantes:
   - Dados no Zenodo/OSF (gera DOI)
   - Citar DOI dos dados no artigo
   - Publicar preprints
-  - Código aberto (GitHub)
+  - Codigo aberto (GitHub)
 
-💡 Dica: Dados abertos = +30% citações!
+💡 Dica: Dados abertos = +30% citacoes!
 
 ================================================================================
-CHECKLIST DE AÇÃO
+CHECKLIST DE ACAO
 ================================================================================
 
-📋 ANTES DA SUBMISSÃO:
+📋 ANTES DA SUBMISSAO:
   [ ] Vincular ORCID ao Lattes
-  [ ] Preparar dados para repositório
-  [ ] Escolher repositório (Zenodo ou OSF)
+  [ ] Preparar dados para repositorio
+  [ ] Escolher repositorio (Zenodo ou OSF)
 
-📤 DURANTE A SUBMISSÃO:
+📤 DURANTE A SUBMISSAO:
   [ ] Depositar preprint (se permitido)
   [ ] Subir dados no Zenodo/OSF e obter DOI
   [ ] Incluir DOI dos dados no manuscrito
 
-📢 APÓS A PUBLICAÇÃO:
-  [ ] Atualizar preprint com link da versão publicada
+📢 APOS A PUBLICACAO:
+  [ ] Atualizar preprint com link da versao publicada
   [ ] Divulgar no LinkedIn, Twitter/X, ResearchGate
-  [ ] Enviar para mailing da área
-  [ ] Compartilhar com assessoria de comunicação
+  [ ] Enviar para mailing da area
+  [ ] Compartilhar com assessoria de comunicacao
   [ ] Monitorar altimetria em altmetric.com
 
 ================================================================================
-REPOSITÓRIOS RECOMENDADOS
+REPOSITORIOS RECOMENDADOS
 ================================================================================
 
 • Zenodo (https://zenodo.org) - Gratuito, multidisciplinar, gera DOI
 • OSF (https://osf.io) - Gratuito, gerencia todo o projeto
 • SciELO Preprints - Multidisciplinar
-• arXiv - Exatas, Computação, Matemática
-• bioRxiv/medRxiv - Ciências da Vida e Saúde
-• SSRN - Ciências Sociais
+• arXiv - Exatas, Computacao, Matematica
+• bioRxiv/medRxiv - Ciencias da Vida e Saude
+• SSRN - Ciencias Sociais
 
 ================================================================================
-INFORMAÇÕES IMPORTANTES
+INFORMACOES IMPORTANTES
 ================================================================================
 
-Esta ferramenta utiliza bases de dados abertas (OpenAlex) e está alinhada 
-às Diretrizes Comuns da CAPES (Ciclo 2025-2028).
+Esta ferramenta utiliza bases de dados abertas (OpenAlex) e esta alinhada 
+as Diretrizes Comuns da CAPES (Ciclo 2025-2028).
 
-Esta ferramenta NÃO possui vinculação oficial com a CAPES ou MEC.
-As métricas são proxies calculadas pela OpenAlex, reconhecida internacionalmente 
+Esta ferramenta NAO possui vinculacao oficial com a CAPES ou MEC.
+As metricas sao proxies calculadas pela OpenAlex, reconhecida internacionalmente 
 como alternativa aberta ao JCR.
 
-A decisão final de submissão é de responsabilidade exclusiva do pesquisador 
+A decisao final de submissao e de responsabilidade exclusiva do pesquisador 
 e do coordenador do programa.
 
 ================================================================================
@@ -760,13 +906,41 @@ e do coordenador do programa.
                 relatorio_texto += f"Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n"
                 relatorio_texto += "=" * 80 + "\n"
                 
-                st.download_button(
-                    label="📥 Baixar Relatório Completo (TXT)",
-                    data=relatorio_texto,
-                    file_name=f"Relatorio_CAPES_{titulo[:30].replace(' ', '_')}.txt",
-                    mime="text/plain",
-                    use_container_width=True
-                )
+                col_btn1, col_btn2 = st.columns(2)
+                
+                with col_btn1:
+                    st.download_button(
+                        label="📥 Baixar Relatório (TXT)",
+                        data=relatorio_texto,
+                        file_name=f"Relatorio_CAPES_{titulo[:30].replace(' ', '_')}.txt",
+                        mime="text/plain",
+                        use_container_width=True
+                    )
+                
+                with col_btn2:
+                    # Gerar PDF
+                    try:
+                        pdf = PDFRelatorio()
+                        pdf.add_page()
+                        pdf.set_font("Arial", size=11)
+                        
+                        # Converter texto para PDF (simplificado)
+                        for linha in relatorio_texto.split('\n'):
+                            # Remover caracteres não suportados
+                            linha_limpa = linha.encode('latin-1', 'replace').decode('latin-1')
+                            pdf.cell(0, 6, linha_limpa, ln=True)
+                        
+                        pdf_bytes = pdf.output(dest='S').encode('latin-1')
+                        
+                        st.download_button(
+                            label="📄 Baixar Relatório (PDF)",
+                            data=pdf_bytes,
+                            file_name=f"Relatorio_CAPES_{titulo[:30].replace(' ', '_')}.pdf",
+                            mime="application/pdf",
+                            use_container_width=True
+                        )
+                    except:
+                        st.error("Erro ao gerar PDF. Use o formato TXT.")
                 
                 st.info("""
                 **💡 O que está incluído no download:**
@@ -785,15 +959,14 @@ e do coordenador do programa.
 # FOOTER COMPLETO - APENAS UMA VEZ
 # ==============================================================================
 st.markdown("---")
-st.markdown("""
+st.markdown(f"""
 <div style="margin-top: 3rem; padding: 2rem; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); color: #e2e8f0; border-radius: 12px; text-align: center;">
-    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong>Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong>{get_texto("footer")}</strong></p>
     <p style="margin: 0 0 1rem 0; line-height: 1.6;">
-        Desenvolvida com bases de dados abertas (OpenAlex) e alinhada às Diretrizes Comuns da CAPES (Ciclo 2025-2028).<br>
-        Esta ferramenta não possui vinculação oficial com a CAPES ou MEC.
+        {get_texto("footer_texto")}
     </p>
     <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
-        <em>Iniciativa de promoção da Ciência Aberta e Transparência na Pós-Graduação Brasileira</em>
+        <em>{get_texto("footer_final")}</em>
     </p>
 </div>
 """, unsafe_allow_html=True)
