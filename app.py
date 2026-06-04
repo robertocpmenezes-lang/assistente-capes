@@ -12,27 +12,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# CSS com Background Premium e Grid Comparativo
+# CSS Simplificado
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
     
-    /* Background Gradiente Suave e Profissional */
     .stApp {
-        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
         font-family: 'Inter', sans-serif;
     }
     
-    /* Container Principal com Fundo Branco Suave */
-    .main-container {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 2rem;
-        margin: 1rem auto;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-    }
-    
-    /* Header com Gradiente */
     .main-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         -webkit-background-clip: text;
@@ -40,8 +29,6 @@ st.markdown("""
         font-size: 2.5rem;
         font-weight: 700;
         text-align: center;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     .sub-header {
@@ -49,215 +36,51 @@ st.markdown("""
         font-size: 1.1rem;
         text-align: center;
         margin-bottom: 2rem;
-        font-weight: 300;
     }
     
-    /* Seções */
     .section-title {
         color: #2d3748;
         font-size: 1.5rem;
         font-weight: 600;
         margin: 2rem 0 1rem 0;
-        padding: 0.75rem 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 10px;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: #2d3748;
-        background-clip: text;
+        padding-bottom: 0.5rem;
+        border-bottom: 3px solid #667eea;
     }
     
-    /* Grid Comparativo Premium */
-    .comparison-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-    }
-    
-    .journal-card-compact {
-        background: white;
-        border-radius: 12px;
-        padding: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 2px solid #e2e8f0;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .journal-card-compact::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    
-    .journal-card-compact.oa-high::before {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-    }
-    
-    .journal-card-compact.oa-medium::before {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-    }
-    
-    .journal-card-compact.closed::before {
-        background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
-    }
-    
-    .journal-card-compact:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-    
-    .journal-rank {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 0.9rem;
-    }
-    
-    .journal-name {
-        font-size: 1.05rem;
-        font-weight: 700;
-        color: #2d3748;
-        margin: 0 0 1rem 0;
-        padding-right: 2.5rem;
-        line-height: 1.3;
-    }
-    
-    .badges-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-    }
-    
-    .badge {
-        padding: 0.35rem 0.75rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.8rem;
-    }
-    
-    .badge-yes { background: #c6f6d5; color: #22543d; }
-    .badge-no { background: #fed7d7; color: #742a2a; }
-    .badge-high { background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); color: white; }
-    .badge-medium { background: #90cdf4; color: #2a4365; }
-    .badge-low { background: #e2e8f0; color: #718096; }
-    
-    .metrics-comparison {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.75rem;
-        margin-top: 1rem;
-    }
-    
-    .metric-compare {
-        background: #f7fafc;
-        padding: 0.75rem 0.5rem;
-        border-radius: 8px;
-        text-align: center;
-    }
-    
-    .metric-compare-label {
-        font-size: 0.7rem;
-        color: #718096;
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-        text-transform: uppercase;
-    }
-    
-    .metric-compare-value {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #2d3748;
-    }
-    
-    /* Formulário com Background */
-    .form-container {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        margin: 2rem 0;
-        border: 1px solid rgba(255,255,255,0.5);
-    }
-    
-    .input-help {
-        font-size: 0.85rem;
-        color: #4a5568;
-        margin-top: 0.5rem;
-        padding: 0.5rem;
-        background: rgba(255,255,255,0.7);
-        border-radius: 6px;
-        border-left: 3px solid #667eea;
-    }
-    
-    /* Alertas */
     .alert-box {
-        padding: 1.25rem;
-        border-radius: 10px;
-        margin: 1.5rem 0;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
     }
     
-    .alert-info { 
-        background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%); 
-        border-left: 4px solid #4299e1; 
-    }
-    .alert-success { 
-        background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%); 
-        border-left: 4px solid #48bb78; 
-    }
-    .alert-warning { 
-        background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%); 
-        border-left: 4px solid #ed8936; 
-    }
+    .alert-info { background: #ebf8ff; border-left: 4px solid #4299e1; }
+    .alert-success { background: #f0fff4; border-left: 4px solid #48bb78; }
+    .alert-warning { background: #fffaf0; border-left: 4px solid #ed8936; }
     
-    /* Footer */
     .footer {
-        margin-top: 4rem;
-        padding: 2.5rem;
+        margin-top: 3rem;
+        padding: 2rem;
         background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
         color: #e2e8f0;
-        border-radius: 15px;
+        border-radius: 12px;
         text-align: center;
     }
     
-    /* Botão */
     .stButton>button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
         padding: 1rem 2rem;
-        border-radius: 10px;
+        border-radius: 8px;
         font-weight: 600;
-        font-size: 1.05rem;
         width: 100%;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-    }
-    
-    .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
     }
 </style>
 """, unsafe_allow_html=True)
 
 # Header
 st.markdown('<p class="main-header">✦ Assistente de Estratégia de Publicação</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028 | Baseado em Ciência Aberta</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Ciclo de Avaliação CAPES 2025-2028</p>', unsafe_allow_html=True)
 
 # ==============================================================================
 # SEÇÃO EDUCACIONAL
@@ -269,7 +92,7 @@ with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", 
     ### 🔍 Como Funciona a Avaliação CAPES 2025-2028
     
     **📊 Procedimento 1:** Métricas do Periódico (Fator de Impacto, Quartil)  
-    **📢 Procedimento 2:** Impacto Social (Altimetria, downloads, menções)  
+    ** Procedimento 2:** Impacto Social (Altimetria, downloads, menções)  
     **✦ Procedimento 3:** Ciência Aberta e Avaliação Qualitativa
     
     ### 🎯 Estratégias:
@@ -279,14 +102,13 @@ with st.expander("📚 Clique para entender os 3 Procedimentos e Estratégias", 
     """)
 
 # ==============================================================================
-# FORMULÁRIO COM EXPLICAÇÕES DETALHADAS
+# FORMULÁRIO
 # ==============================================================================
 st.markdown('<div class="section-title">▸ Dados da Produção Intelectual</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="alert-box alert-info">
-<strong>💡 Dica:</strong> Preencha os campos abaixo com informações da sua pesquisa. 
-Quanto mais detalhado, mais precisas serão as recomendações de revistas!
+<strong> Dica:</strong> Preencha os campos abaixo. Quanto mais detalhado, mais precisas serão as recomendações!
 </div>
 """, unsafe_allow_html=True)
 
@@ -295,46 +117,35 @@ with st.form("dados_pesquisa", clear_on_submit=False):
     
     with col1:
         titulo = st.text_input(
-            "📝 Título do Artigo ou Tema da Pesquisa",
-            help="💡 **Por que isso importa?** O título ajuda a entender o contexto e a relevância da pesquisa para o Procedimento 3 (Avaliação Qualitativa). Seja específico!"
+            "📝 Título do Artigo ou Tema",
+            help="💡 O título ajuda a contextualizar a relevância para o Procedimento 3 (Qualitativo)."
         )
-        st.markdown('<div class="input-help"><strong>Exemplo:</strong> "Machine Learning para Diagnóstico Precoce de Diabetes Tipo 2"</div>', unsafe_allow_html=True)
         
         area_capes = st.selectbox(
-            "📚 Grande Área de Avaliação CAPES",
+            "📚 Grande Área CAPES",
             ["Ciências da Saúde", "Ciências Humanas", "Ciências Exatas e da Terra", 
              "Engenharias", "Ciências Sociais Aplicadas", "Ciências Biológicas", 
              "Linguística, Letras e Artes", "Ciências Agrárias"],
-            help="💡 **Importante:** Cada área tem critérios diferentes. Exatas/Saúde valorizam mais FI alto. Humanas valorizam mais o Proc. 3 (Qualitativo)."
+            help="💡 Cada área pondera diferentemente os 3 procedimentos."
         )
-        st.markdown('<div class="input-help">Selecione a área que melhor representa sua pesquisa</div>', unsafe_allow_html=True)
 
     with col2:
         resumo = st.text_area(
             "🔑 Palavras-chave (PREFERENCIALMENTE EM INGLÊS)",
-            height=140,
-            placeholder="Ex: machine learning diabetes prediction healthcare genomics",
-            help="💡 **CRUCIAL:** Use 3-8 palavras-chave em INGLÊS. A ferramenta busca na base global OpenAlex. Termos em inglês retornam MUITO mais revistas e métricas precisas!"
+            height=130,
+            placeholder="Ex: machine learning healthcare prediction",
+            help="💡 Use 3-8 palavras-chave em INGLÊS para buscar na base global OpenAlex."
         )
-        st.markdown("""
-        <div class="input-help">
-        <strong>Como escolher:</strong><br>
-        • Use termos técnicos da sua área<br>
-        • Combine: método + aplicação + área<br>
-        • Ex: "machine learning healthcare prediction" ou "CRISPR gene editing agriculture"
-        </div>
-        """, unsafe_allow_html=True)
         
         foco = st.selectbox(
-            "🎯 Estratégia de Publicação",
-            ["⚖️ Equilibrado (Impacto + Ciência Aberta)", 
+            " Estratégia de Publicação",
+            ["️ Equilibrado (Impacto + Ciência Aberta)", 
              "📢 Máximo Impacto Social (Altimetria)", 
-             "📈 Máximo Tradicional (Fator de Impacto)"],
-            help="💡 **Qual escolher?**<br>• **Equilibrado:** Mais seguro, recomendado para maioria<br>• **Impacto Social:** Se quer máximo alcance/divulgação<br>• **Tradicional:** Se busca prestígio acadêmico máximo"
+             " Máximo Tradicional (Fator de Impacto)"],
+            help="💡 Equilibrado é o mais seguro. Impacto Social prioriza Open Access. Tradicional foca em FI alto."
         )
-        st.markdown('<div class="input-help">Escolha baseado no seu objetivo de carreira</div>', unsafe_allow_html=True)
     
-    submitted = st.form_submit_button("🚀 Gerar Relatório Completo com Grade Comparativa", use_container_width=True)
+    submitted = st.form_submit_button(" Gerar Relatório com Grade Comparativa", use_container_width=True)
 
 # ==============================================================================
 # FUNÇÕES
@@ -380,34 +191,30 @@ def buscar_revistas(query, max_results=6):
 # ==============================================================================
 if submitted:
     if not resumo.strip():
-        st.markdown('<div class="alert-box alert-warning">⚠️ <strong>Atenção:</strong> Insira pelo menos 3-5 palavras-chave em inglês para realizar a busca.</div>', unsafe_allow_html=True)
+        st.warning("⚠️ Insira palavras-chave em inglês.")
     else:
-        with st.spinner("⟳ Consultando OpenAlex e gerando análise comparativa..."):
+        with st.spinner("⟳ Buscando revistas..."):
             query = " ".join(resumo.split()[:15])
             revistas = buscar_revistas(query, max_results=6)
             
             if revistas:
-                st.markdown('<div class="alert-box alert-success">✓ <strong>Relatório gerado com sucesso! Compare as revistas na grade abaixo.</strong></div>', unsafe_allow_html=True)
+                st.success("✓ Relatório gerado!")
                 
-                # Grade Comparativa Visual
+                # Grade Comparativa
                 st.markdown('<div class="section-title">✦ Grade Comparativa de Revistas</div>', unsafe_allow_html=True)
                 
-                st.markdown("""
-                <div class="alert-box alert-info">
-                <strong>📊 Como usar esta grade comparativa:</strong><br>
-                • Cada card representa uma revista sugerida<br>
-                • 🟢 <strong>Card Verde:</strong> Open Access + Alto Impacto (melhor opção!)<br>
-                • 🔵 <strong>Card Azul:</strong> Open Access (boa para altimetria)<br>
-                • 🔴 <strong>Card Vermelho:</strong> Fechado/Paywall (alto FI tradicional)<br>
-                • Compare lado a lado: FI, citações e potencial de altimetria
-                </div>
-                """, unsafe_allow_html=True)
+                st.info("""
+                ** Como usar:** Compare lado a lado - Fator de Impacto, Citações e Potencial de Altimetria.
+                -  Open Access + Alto Impacto (melhor)
+                - 🔵 Open Access (boa para altimetria)
+                - 🔴 Fechado (alto FI tradicional)
+                """)
                 
-                # Preparar dados
+                # Criar grid com columns nativo
                 melhores_oa = []
-                html_grid = '<div class="comparison-grid">'
+                cols = st.columns(2)  # 2 colunas
                 
-                for i, rev in enumerate(revistas, 1):
+                for i, rev in enumerate(revistas):
                     nome = rev.get("display_name", "N/A")
                     is_oa = rev.get("is_oa", False)
                     stats = rev.get("summary_stats", {})
@@ -417,212 +224,164 @@ if submitted:
                     if is_oa:
                         melhores_oa.append(nome)
                     
-                    # Determinar classe
+                    # Determinar emoji e cor
                     if is_oa and citacoes > 5000:
-                        card_class = "oa-high"
-                        alt_badge = '<span class="badge badge-high">🔥 Alto</span>'
+                        card_emoji = "🟢"
+                        alt_text = "🔥 Alto"
                     elif is_oa:
-                        card_class = "oa-medium"
-                        alt_badge = '<span class="badge badge-medium">● Médio</span>'
+                        card_emoji = "🔵"
+                        alt_text = "● Médio"
                     else:
-                        card_class = "closed"
-                        alt_badge = '<span class="badge badge-low">○ Baixo</span>'
+                        card_emoji = "🔴"
+                        alt_text = "○ Baixo"
                     
-                    # Badges
-                    acesso_badge = '<span class="badge badge-yes">✓ Open Access</span>' if is_oa else '<span class="badge badge-no">✕ Fechado</span>'
+                    acesso_text = "✓ Open Access" if is_oa else "✕ Fechado"
                     
-                    # Cor do FI
-                    if fi > 5:
-                        fi_color = "#dd6b20"
-                        fi_class = "high"
-                    elif fi > 2:
-                        fi_color = "#4299e1"
-                        fi_class = "medium"
-                    else:
-                        fi_color = "#4a5568"
-                        fi_class = "low"
+                    # Destaque top 3
+                    destaque = " " if i < 3 else ""
                     
-                    # Destaque top
-                    rank_badge = f'<div class="journal-rank">#{i}</div>' if i <= 3 else ''
+                    # Selecionar coluna
+                    col_idx = i % 2
                     
-                    html_grid += f'''
-                    <div class="journal-card-compact {card_class}">
-                        {rank_badge}
-                        <h3 class="journal-name">{nome}</h3>
-                        <div class="badges-row">
-                            {acesso_badge}
-                            {alt_badge}
-                        </div>
-                        <div class="metrics-comparison">
-                            <div class="metric-compare">
-                                <div class="metric-compare-label">Fator de Impacto</div>
-                                <div class="metric-compare-value" style="color: {fi_color};">{fi:.2f}</div>
-                            </div>
-                            <div class="metric-compare">
-                                <div class="metric-compare-label">Citações</div>
-                                <div class="metric-compare-value">{formatar_numero(citacoes)}</div>
-                            </div>
-                            <div class="metric-compare">
-                                <div class="metric-compare-label">Ranking</div>
-                                <div class="metric-compare-value">#{i}</div>
-                            </div>
-                        </div>
-                    </div>
-                    '''
-                
-                html_grid += '</div>'
-                st.markdown(html_grid, unsafe_allow_html=True)
+                    with cols[col_idx]:
+                        st.markdown(f"### {destaque}{card_emoji} {nome}")
+                        
+                        # Badges
+                        badge_col1, badge_col2 = st.columns(2)
+                        with badge_col1:
+                            if is_oa:
+                                st.success(f"**{acesso_text}**", icon="✅")
+                            else:
+                                st.error(f"**{acesso_text}**", icon="❌")
+                        
+                        with badge_col2:
+                            st.info(f"**Altimetria: {alt_text}**", icon="📊")
+                        
+                        # Métricas
+                        metric_col1, metric_col2, metric_col3 = st.columns(3)
+                        with metric_col1:
+                            st.metric("Fator de Impacto", f"{fi:.2f}")
+                        with metric_col2:
+                            st.metric("Citações", formatar_numero(citacoes))
+                        with metric_col3:
+                            st.metric("Ranking", f"#{i+1}")
+                        
+                        st.markdown("---")
                 
                 # Análise Estratégica
-                st.markdown('<div class="section-title">▸ Análise Estratégica</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="alert-box alert-info"><strong>Área:</strong> {area_capes} | <strong>Estratégia:</strong> {foco}</div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-title"> Análise Estratégica</div>', unsafe_allow_html=True)
+                st.info(f"**Área:** {area_capes} | **Estratégia:** {foco}")
                 
                 if "Equilibrado" in foco:
-                    st.markdown("""
-                    <div class="alert-box alert-success">
-                    <h4 style="margin-top: 0;">✓ Estratégia Equilibrada Recomendada</h4>
-                    <p>Você escolheu a estratégia mais segura e alinhada com a CAPES 2025-2028.</p>
-                    <p><strong>Recomendação:</strong> Na grade acima, priorize os cards <strong>verdes</strong> (Open Access + Alto Impacto). Eles oferecem o melhor equilíbrio entre Fator de Impacto (Proc. 1) e potencial de Altimetria (Proc. 2).</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.success("""
+                    **✓ Estratégia Equilibrada Recomendada**
                     
+                    Priorize os cards 🟢 (Open Access + Alto Impacto). Eles oferecem o melhor equilíbrio entre FI (Proc. 1) e Altimetria (Proc. 2).
+                    """)
                 elif "Impacto Social" in foco:
                     if melhores_oa:
-                        st.markdown(f"""
-                        <div class="alert-box alert-success">
-                        <h4 style="margin-top: 0;">📢 Foco em Impacto Social</h4>
-                        <p><strong>Revistas Open Access encontradas (priorize estas):</strong></p>
-                        <ul>
-                        {"".join([f"<li><strong>{r}</strong></li>" for r in melhores_oa])}
-                        </ul>
-                        <p><strong>Ação pós-publicação:</strong> Compartilhe ativamente no LinkedIn, Twitter/X, ResearchGate e mailing lists da área. Isso alimenta diretamente o score de Altimetria!</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.success(f"""
+                        **📢 Foco em Impacto Social**
+                        
+                        **Revistas Open Access (priorize):**
+                        {chr(10).join([f"- {r}" for r in melhores_oa])}
+                        
+                        **Ação:** Compartilhe ativamente nas redes após publicar!
+                        """)
                     else:
-                        st.markdown("""
-                        <div class="alert-box alert-warning">
-                        <h4 style="margin-top: 0;">⚠ Atenção: Nenhuma Open Access</h4>
-                        <p><strong>Solução OBRIGATÓRIA:</strong> Deposite o preprint em SciELO Preprints, arXiv ou bioRxiv ANTES ou durante a submissão. Isso garante altimetria mesmo com revista fechada!</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-                    
+                        st.warning("⚠️ Nenhuma Open Access. Deposite preprint em SciELO/arXiv!")
                 else:
-                    st.markdown("""
-                    <div class="alert-box alert-success">
-                    <h4 style="margin-top: 0;">📈 Foco Tradicional</h4>
-                    <p><strong>Recomendação:</strong> Priorize revistas com FI > 3.0 (Exatas/Saúde) ou > 1.0 (Humanas). Na grade, observe os cards com FI mais alto.</p>
-                    <p><strong>Importante:</strong> Revistas de alto impacto geralmente são fechadas. Deposite o preprint em repositório aberto para compensar no Proc. 2!</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.success("""
+                    **📈 Foco Tradicional**
+                    
+                    Priorize FI > 3.0 (Exatas/Saúde) ou > 1.0 (Humanas).
+                    
+                    **Importante:** Deposite preprint se for fechada para compensar no Proc. 2!
+                    """)
                 
                 # Procedimentos
-                st.markdown('<div class="section-title">▸ Guia dos Procedimentos CAPES</div>', unsafe_allow_html=True)
+                st.markdown('<div class="section-title">▸ Guia dos Procedimentos</div>', unsafe_allow_html=True)
                 
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    st.markdown("""
-                    <div class="alert-box alert-info">
-                    <h4 style="margin-top: 0;">📊 Proc. 1</h4>
-                    <p><strong>Métricas do Periódico</strong></p>
-                    <p>A CAPES usa OpenAlex como base oficial.</p>
-                    <p><strong>Referências Exatas/Saúde:</strong></p>
-                    <ul style="padding-left: 1rem; margin: 0;">
-                        <li>Excelente: FI > 3.0</li>
-                        <li>Bom: FI 1.5-3.0</li>
-                        <li>Aceitável: FI 0.5-1.5</li>
-                    </ul>
-                    <p><strong>Referências Humanas:</strong></p>
-                    <ul style="padding-left: 1rem; margin: 0;">
-                        <li>Excelente: FI > 1.5</li>
-                        <li>Bom: FI 0.5-1.5</li>
-                        <li>Aceitável: FI 0.2-0.5</li>
-                    </ul>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.info("""
+                    **📊 Proc. 1 - Métricas**
+                    
+                    CAPES usa OpenAlex.
+                    
+                    **Exatas/Saúde:**
+                    - Excelente: FI > 3.0
+                    - Bom: 1.5-3.0
+                    - Aceitável: 0.5-1.5
+                    
+                    **Humanas:**
+                    - Excelente: FI > 1.5
+                    - Bom: 0.5-1.5
+                    - Aceitável: 0.2-0.5
+                    """)
                 
                 with col2:
                     if melhores_oa:
-                        st.markdown("""
-                        <div class="alert-box alert-success">
-                        <h4 style="margin-top: 0;">📢 Proc. 2</h4>
-                        <p><strong>Impacto Social</strong></p>
-                        <p style="color: #22543d;"><strong>✓ Vantagem:</strong> Tem Open Access!</p>
-                        <p><strong>Benefícios:</strong></p>
-                        <ul style="padding-left: 1rem; margin: 0;">
-                            <li>Artigo gratuito</li>
-                            <li>Mais downloads</li>
-                            <li>Mais compartilhamentos</li>
-                            <li>Mais menções</li>
-                        </ul>
-                        <p style="margin-top: 0.5rem;"><strong>Ação:</strong> Divulgue ativamente!</p>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.success("""
+                        **📢 Proc. 2 - Altimetria
+                        
+                        ✓ Tem Open Access!
+                        
+                        **Benefícios:**
+                        - Mais downloads
+                        - Mais compartilhamentos
+                        - Mais menções
+                        
+                        **Ação:** Divulgue!
+                        """)
                     else:
-                        st.markdown("""
-                        <div class="alert-box alert-warning">
-                        <h4 style="margin-top: 0;">📢 Proc. 2</h4>
-                        <p><strong>Impacto Social</strong></p>
-                        <p style="color: #742a2a;"><strong>⚠ Fechadas</strong></p>
-                        <p><strong>Solução:</strong></p>
-                        <ol style="padding-left: 1rem; margin: 0;">
-                            <li>Deposite preprint</li>
-                            <li>Compartilhe link</li>
-                            <li>Use redes sociais</li>
-                        </ol>
-                        </div>
-                        """, unsafe_allow_html=True)
+                        st.warning("""
+                        **📢 Proc. 2 - Altimetria
+                        
+                        ⚠ Fechadas
+                        
+                        **Solução:**
+                        1. Deposite preprint
+                        2. Compartilhe link
+                        3. Use redes sociais
+                        """)
                 
                 with col3:
-                    st.markdown("""
-                    <div class="alert-box alert-info">
-                    <h4 style="margin-top: 0;">✦ Proc. 3</h4>
-                    <p><strong>Ciência Aberta</strong></p>
-                    <p>A CAPES premia a transparência!</p>
-                    <p><strong>Ações:</strong></p>
-                    <ul style="padding-left: 1rem; margin: 0;">
-                        <li>Dados no <a href="https://zenodo.org" target="_blank">Zenodo</a></li>
-                        <li>Citar DOI dos dados</li>
-                        <li>Preprints</li>
-                        <li>Código aberto</li>
-                    </ul>
-                    <p style="margin-top: 0.5rem;"><strong>💡 Dica:</strong> Dados abertos = 30% mais citações!</p>
-                    </div>
-                    """, unsafe_allow_html=True)
+                    st.info("""
+                    **✦ Proc. 3 - Ciência Aberta
+                    
+                    CAPES premia transparência!
+                    
+                    **Ações:**
+                    - Dados no Zenodo/OSF
+                    - Citar DOI dos dados
+                    - Preprints
+                    - Código aberto
+                    
+                    💡 Dados abertos = 30% mais citações!
+                    """)
                 
                 # Checklist
                 st.markdown('<div class="section-title">▸ Checklist</div>', unsafe_allow_html=True)
-                st.markdown("""
-                <div class="alert-box alert-success">
-                <strong>📋 Antes:</strong> [ ] ORCID vinculado | [ ] Dados organizados<br>
-                <strong>📤 Durante:</strong> [ ] Preprint depositado | [ ] DOI no artigo<br>
-                <strong>📢 Após:</strong> [ ] Divulgar | [ ] Monitorar altimetria
-                </div>
-                """, unsafe_allow_html=True)
+                st.success("""
+                ** Antes:** [ ] ORCID vinculado | [ ] Dados organizados  
+                ** Durante:** [ ] Preprint | [ ] DOI no artigo  
+                **📢 Após:** [ ] Divulgar | [ ] Monitorar altimetria
+                """)
                 
             else:
-                st.markdown("""
-                <div class="alert-box alert-warning">
-                <h4 style="margin-top: 0;">⚠️ Nenhuma revista encontrada</h4>
-                <p><strong>Dicas:</strong></p>
-                <ul>
-                    <li>Use palavras-chave em inglês</li>
-                    <li>Use termos mais genéricos</li>
-                    <li>Ex: "machine learning" em vez de "deep learning neural network"</li>
-                </ul>
-                </div>
-                """, unsafe_allow_html=True)
+                st.warning("⚠️ Nenhuma revista encontrada. Tente termos em inglês mais genéricos.")
 
 # Footer
 st.markdown("""
 <div class="footer">
-    <p style="margin: 0 0 1rem 0; font-size: 1.1rem;"><strong>✦ Ferramenta de Apoio à Pesquisa</strong></p>
-    <p style="margin: 0 0 1rem 0; line-height: 1.6;">
-        Desenvolvida com OpenAlex e alinhada à CAPES 2025-2028.<br>
-        Sem vínculo oficial com CAPES/MEC.
+    <p style="margin: 0 0 1rem 0;"><strong> Ferramenta de Apoio à Pesquisa</strong></p>
+    <p style="margin: 0 0 1rem 0;">
+        OpenAlex + CAPES 2025-2028 | Sem vínculo oficial CAPES/MEC
     </p>
     <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">
-        <em>Promovendo Ciência Aberta e Transparência</em>
+        <em>Promovendo Ciência Aberta</em>
     </p>
 </div>
 """, unsafe_allow_html=True)
